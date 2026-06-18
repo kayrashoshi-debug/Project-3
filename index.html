@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Universe of Music - Music Finders</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for beautiful musical icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for retro/modern futuristic aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth transitions for the dynamic backgrounds */
+        .theme-transition {
+            transition: background-color 1s ease, background-image 1s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        /* Custom scrollbar for conversational UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Pulsing light glow effects */
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--glow-color)); }
+            50% { filter: drop-shadow(0 0 15px var(--glow-color)); }
+        }
+        .glowing-element {
+            animation: pulseGlow 3s infinite;
+        }
+
+        /* Rotation for Vinyl/Cassette tapes */
+        @keyframes rotateMusic {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spinning-record {
+            animation: rotateMusic 8s linear infinite;
+        }
+        .spinning-paused {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-950 text-white font-sans overflow-x-hidden theme-transition flex flex-col">
+
+    <!-- Background Space Particles / Canvas for Dynamic Atmosphere -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <canvas id="ambientCanvas" class="w-full h-full opacity-40"></canvas>
+    </div>
+
+    <!-- Header / Branding Nav -->
+    <header class="relative z-10 border-b border-white/10 bg-slate-900/60 backdrop-blur-md px-6 py-4 theme-transition" id="navbar">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 via-rose-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/20" id="logoIcon">
+                    <i class="fa-solid fa-compact-disc text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-space font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400" id="appTitle">The Universe of Music</h1>
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Created by Music Finders</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Genre Badges for easy navigation/vibe switching -->
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <button onclick="setTheme('jazz')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition flex items-center gap-1.5" id="btn-jazz">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Jazz Lounge
+                </button>
+                <button onclick="setTheme('breakcore')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 hover:bg-fuchsia-500/20 transition flex items-center gap-1.5" id="btn-breakcore">
+                    <span class="w-2 h-2 rounded-full bg-fuchsia-400"></span> Breakcore Glitch
+                </button>
+                <button onclick="setTheme('geometrydash')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition flex items-center gap-1.5" id="btn-geometrydash">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Geometry Dash
+                </button>
+                <button onclick="setTheme('bloonstd6')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/20 transition flex items-center gap-1.5" id="btn-bloonstd6">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400"></span> Bloons TD 6
+                </button>
+                <button onclick="setTheme('epicrpg')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition flex items-center gap-1.5" id="btn-epicrpg">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span> Epic RPG
+                </button>
+                <button onclick="setTheme('cyberpunk')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition flex items-center gap-1.5" id="btn-cyberpunk">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span> Cyberpunk
+                </button>
+                <button onclick="setTheme('techno')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition flex items-center gap-1.5" id="btn-techno">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Techno Neon
+                </button>
+                <button onclick="setTheme('synthwave')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 transition flex items-center gap-1.5" id="btn-synthwave">
+                    <span class="w-2 h-2 rounded-full bg-rose-400"></span> Synth & Dream
+                </button>
+                <button onclick="setTheme('space')" class="genre-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20 transition flex items-center gap-1.5" id="btn-space">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Default Cosmos
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- Left Side: Interactive Vinyl, Visualizer, Quick Match Cards (5 columns) -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Dynamic Record Deck / Visualizer Widget -->
+            <div class="bg-slate-900/40 border border-white/10 rounded-3xl p-6 flex flex-col items-center text-center justify-between backdrop-blur-md relative overflow-hidden flex-1 theme-transition" id="musicWidget">
+                <!-- Decorative absolute grid -->
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent)] pointer-events-none"></div>
+
+                <div class="w-full flex justify-between items-center z-10">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400" id="deckStatus">Current Deck: Vibe Mode</span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" id="deckIndicator"></span>
+                </div>
+
+                <!-- Vinyl Record Container -->
+                <div class="relative my-6 group">
+                    <div id="vinylDisk" class="w-48 h-48 sm:w-56 sm:h-56 rounded-full bg-slate-950 flex items-center justify-center shadow-2xl relative spinning-record spinning-paused border-4 border-slate-800 transition-all duration-500" style="--glow-color: #f59e0b;">
+                        <!-- Grooves in Vinyl -->
+                        <div class="absolute inset-4 rounded-full border border-white/5"></div>
+                        <div class="absolute inset-8 rounded-full border border-white/5"></div>
+                        <div class="absolute inset-12 rounded-full border border-white/10"></div>
+                        <div class="absolute inset-16 rounded-full border border-white/5"></div>
+                        <!-- Vinyl Center Sticker -->
+                        <div id="vinylCenter" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center p-2 shadow-inner transition-all duration-1000">
+                            <div class="w-4 h-4 rounded-full bg-slate-950"></div>
+                        </div>
+                    </div>
+                    <!-- Playback needle -->
+                    <div id="recordNeedle" class="absolute top-0 right-0 w-16 h-28 origin-top-right transform translate-x-4 -rotate-12 transition-transform duration-500 pointer-events-none">
+                        <svg class="w-full h-full" viewBox="0 0 50 100" fill="none">
+                            <path d="M45 5 L35 5 L20 75 L15 80" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="45" cy="5" r="4" fill="#64748b"/>
+                            <rect x="10" y="78" width="10" height="12" rx="2" fill="#475569" transform="rotate(15 15 80)"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Visualizer Controls & Visual Canvas -->
+                <div class="w-full z-10">
+                    <div class="flex flex-col gap-1 items-center mb-4">
+                        <h3 class="font-space font-bold text-lg text-white" id="currentTrackTitle">Universe Harmony</h3>
+                        <p class="text-xs text-slate-400" id="currentTrackGenre">Select a music style to tune the deck</p>
+                    </div>
+
+                    <!-- CSS-driven Sound Waves -->
+                    <div class="h-10 w-full flex items-center justify-center gap-1 mb-4" id="visualizerBars">
+                        <span class="w-1 bg-amber-500 rounded-full h-4 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-8 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-3 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-5 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-7 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-9 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-6 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-4 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-2 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-6 transition-all duration-150"></span>
+                        <span class="w-1 bg-amber-500 rounded-full h-8 transition-all duration-150"></span>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-4">
+                        <button id="prevTrackBtn" onclick="randomFeedback()" class="w-10 h-10 rounded-full border border-white/10 hover:border-white/30 text-slate-400 hover:text-white flex items-center justify-center transition active:scale-95">
+                            <i class="fa-solid fa-backward-step"></i>
+                        </button>
+                        <button id="playBtn" onclick="togglePlay()" class="w-14 h-14 rounded-full bg-white text-slate-950 flex items-center justify-center text-lg font-bold shadow-lg shadow-white/10 hover:scale-105 transition active:scale-95">
+                            <i class="fa-solid fa-play ml-1" id="playIcon"></i>
+                        </button>
+                        <button id="nextTrackBtn" onclick="randomFeedback()" class="w-10 h-10 rounded-full border border-white/10 hover:border-white/30 text-slate-400 hover:text-white flex items-center justify-center transition active:scale-95">
+                            <i class="fa-solid fa-forward-step"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fun Facts / Inspiration Quick Card -->
+            <div class="bg-slate-900/40 border border-white/10 rounded-3xl p-5 backdrop-blur-md flex items-center gap-4 theme-transition" id="didYouKnowCard">
+                <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl" id="factEmoji">
+                    🎷
+                </div>
+                <div class="flex-1">
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-amber-400" id="factLabel">Music Connection</span>
+                    <p class="text-xs text-slate-300 leading-relaxed mt-0.5" id="factText">Did you know? Great jazz matches the exploratory rhythms of sandbox video games like Minecraft and Persona!</p>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- Right Side: AI Chat & Matchfinder Engine (7 columns) -->
+        <section class="lg:col-span-7 flex flex-col gap-6 h-[600px] lg:h-auto">
+            
+            <!-- Conversation Space / Output Display -->
+            <div class="bg-slate-900/40 border border-white/10 rounded-3xl backdrop-blur-md flex flex-col overflow-hidden flex-1 theme-transition" id="chatContainer">
+                
+                <!-- Chat Window Header -->
+                <div class="px-6 py-4 bg-white/5 border-b border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 via-orange-500 to-indigo-500 flex items-center justify-center text-lg shadow-inner" id="aiAvatar">
+                                <i class="fa-solid fa-circle-nodes"></i>
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        </div>
+                        <div>
+                            <h2 class="font-space font-bold text-sm text-white flex items-center gap-1.5">
+                                Vibe Guide AI 
+                                <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded-md font-sans uppercase font-extrabold">Active</span>
+                            </h2>
+                            <p class="text-xs text-slate-400" id="subTitleText">Your guide across music universes</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Prompt Suggestions Trigger -->
+                    <button onclick="showQuickPrompts()" class="text-xs font-semibold text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 border border-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-lightbulb"></i> <span>Quick Prompts</span>
+                    </button>
+                </div>
+
+                <!-- Messages Feed -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col" id="chatFeed">
+                    <!-- AI Greetings -->
+                    <div class="max-w-[85%] self-start flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex-shrink-0 flex items-center justify-center text-xs text-slate-400">
+                            <i class="fa-solid fa-headphones"></i>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed">
+                            <p class="font-semibold mb-1">Hey there! Welcome to the Music Finders space. 👋</p>
+                            <p class="text-slate-300">I love helping music fans discover the cosmic connection between mainstream genres and epic video game tracks!</p>
+                            <p class="text-slate-300 mt-2">What's your friend's absolute favorite genre or song? Or are they convinced game music is just random bleeps and noise?</p>
+                        </div>
+                    </div>
+
+                    <!-- Initial Suggestion Chips inside feed -->
+                    <div class="flex flex-wrap gap-2 pl-11" id="quickChipsContainer">
+                        <button onclick="submitPrompt('My friend thinks game music is just noise but they love upbeat tropical tunes! Any Bloons TD 6 recommendations?')" class="text-xs bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
+                            🎈 "Find fun Bloons TD 6 tropical tracks"
+                        </button>
+                        <button onclick="submitPrompt('What online custom levels are famous in Geometry Dash? Tell me about Kisaragi, Aperture and Tidal Wave!')" class="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
+                            🟩 "Tell me about Tidal Wave, Aperture and Kisaragi"
+                        </button>
+                        <button onclick="submitPrompt('Show us awesome Pokémon video game tracks!')" class="text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
+                            ⭐ "Explore Pokémon Soundtrack Vibes"
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Modal for Quick Prompts -->
+                <div id="quickPromptModal" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-6 flex flex-col justify-center items-center">
+                    <div class="max-w-md w-full bg-slate-900 border border-white/10 rounded-3xl p-6 shadow-2xl relative">
+                        <button onclick="hideQuickPrompts()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <h3 class="font-space font-bold text-lg text-white mb-1"><i class="fa-solid fa-sparkles text-amber-400 mr-1.5"></i> Vibe Prompt Builder</h3>
+                        <p class="text-xs text-slate-400 mb-4">Choose a preset starter or mix your own style to chat with the Gemini AI.</p>
+                        
+                        <div class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+                            <button onclick="selectPreset('My friend loves upbeat modern jazz-fusion. What Persona tracks match that vibe?')" class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition text-xs leading-relaxed text-slate-300">
+                                <strong>Persona Jazz Finder:</strong> "My friend loves upbeat modern jazz-fusion. What Persona tracks match that vibe?"
+                            </button>
+                            <button onclick="selectPreset('Tell me about legendary custom levels in Geometry Dash, specifically Tidal Wave, Aperture and the mythic level Kisaragi!')" class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition text-xs leading-relaxed text-slate-300">
+                                <strong>GD Legends:</strong> "Tell me about legendary custom levels in Geometry Dash, specifically Tidal Wave, Aperture and the mythic level Kisaragi!"
+                            </button>
+                            <button onclick="selectPreset('My friend loves tropical party and sunny brass tracks, what are the best songs from Bloons TD 6?')" class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition text-xs leading-relaxed text-slate-300">
+                                <strong>Bloons Party:</strong> "My friend loves tropical party and sunny brass tracks, what are the best songs from Bloons TD 6?"
+                            </button>
+                            <button onclick="selectPreset('Suggest cyberpunk style deep house techno from high-speed futuristic racing games.')" class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition text-xs leading-relaxed text-slate-300">
+                                <strong>High-speed Cyberpunk:</strong> "Suggest cyberpunk style deep house techno from high-speed futuristic racing games."
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Interactive Dock -->
+                <div class="p-4 bg-white/5 border-t border-white/10 flex flex-col gap-2 relative z-10">
+                    <form onsubmit="handleSend(event)" class="flex gap-2">
+                        <input type="text" id="userInput" placeholder="Ask the Vibe AI or type a genre... (e.g. 'Cozy Jazz-fusion')" class="flex-1 bg-slate-950/60 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 text-white placeholder-slate-500 theme-transition" required>
+                        <button type="submit" id="sendBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center transition active:scale-95 shadow-lg shadow-indigo-500/10">
+                            <i class="fa-solid fa-paper-plane" id="sendIcon"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="flex items-center justify-between text-[10px] text-slate-500 px-1">
+                        <span class="flex items-center gap-1"><i class="fa-solid fa-lock"></i> No API key needed</span>
+                        <span>Press Enter to analyze vibe</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Global Alert / Status Dialog (custom modal instead of alert) -->
+    <div id="statusModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-white/10 p-6 rounded-3xl max-w-sm w-full text-center shadow-2xl relative">
+            <div class="w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center text-2xl mx-auto mb-4" id="modalIcon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="font-space font-bold text-lg text-white mb-2" id="modalTitle">API Request Issue</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6" id="modalDesc">We encountered an issue matching the music with the Gemini engine. Let's try again in a moment.</p>
+            <button onclick="closeModal()" class="w-full py-2.5 rounded-xl bg-white text-slate-900 text-sm font-semibold hover:bg-slate-200 transition">Understood</button>
+        </div>
+    </div>
+
+    <!-- Scripting Area: Core logic, Gemini API setup, animations, visualizer, and vibe-coding engines -->
+    <script>
+        // API Configuration (Gemini API runtime configuration)
+        const apiKey = ""; 
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'music-universe-hack';
+
+        // Internal State
+        let isPlaying = false;
+        let activeTheme = 'space';
+        let animationFrameId = null;
+        let visualizerInterval = null;
+        let bars = []; // Safely globally scoped visualizer bars
+
+        // Web Audio API Synthesizer State
+        let audioCtx = null;
+        let synthInterval = null;
+        let activeNodes = [];
+        let synthStep = 0;
+        let masterGain = null;
+        let delayNode = null;
+        let feedbackNode = null;
+
+        // Dynamic Theme Configurations (Colors, effects, content matched)
+        const themes = {
+            jazz: {
+                primary: 'amber',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #291a02 0%, #030200 100%)',
+                navBg: 'rgba(30, 20, 5, 0.7)',
+                accent: '#f59e0b',
+                vinylLabel: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+                logo: 'from-amber-400 to-yellow-600',
+                mood: 'Relaxed & Sophisticated Lounge',
+                fact: 'Did you know? Persona 5’s soundtrack uses Acid Jazz to make exploration feel stylish, stylish, and full of groove!',
+                factEmoji: '🎷',
+                promptPrefix: 'jazz'
+            },
+            breakcore: {
+                primary: 'fuchsia',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #2e082b 0%, #050105 100%)',
+                navBg: 'rgba(25, 5, 23, 0.7)',
+                accent: '#d946ef',
+                vinylLabel: 'linear-gradient(135deg, #f0abfc 0%, #c026d3 100%)',
+                logo: 'from-fuchsia-400 to-violet-600',
+                mood: 'Glitchy & High-Tempo Breakcore',
+                fact: 'Did you know? Neon White features an incredible high-speed electronic breakcore soundtrack by Machine Girl that matches its speedrunning action!',
+                factEmoji: '👾',
+                promptPrefix: 'breakcore'
+            },
+            geometrydash: {
+                primary: 'emerald',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #043516 0%, #000802 100%)',
+                navBg: 'rgba(5, 30, 15, 0.7)',
+                accent: '#10b981',
+                vinylLabel: 'linear-gradient(135deg, #34d399 0%, #047857 100%)',
+                logo: 'from-emerald-400 to-green-600',
+                mood: 'Rhythm-Fueled Electro Sprint',
+                fact: 'Did you know? Geometry Dash levels like Aperture and Kisaragi use incredible speed and gravity-portal transitions perfectly synced to electronic beats!',
+                factEmoji: '🟩',
+                promptPrefix: 'geometrydash'
+            },
+            bloonstd6: {
+                primary: 'yellow',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #3a2202 0%, #0d0600 100%)',
+                navBg: 'rgba(40, 25, 5, 0.7)',
+                accent: '#eab308',
+                vinylLabel: 'linear-gradient(135deg, #fef08a 0%, #ca8a04 100%)',
+                logo: 'from-yellow-400 to-amber-600',
+                mood: 'Upbeat Tropical Balloon Party',
+                fact: 'Did you know? Tim Haywood composed Bloons TD 6\'s music to be incredibly bouncy, blending tropical house rhythms with happy brass fanfares to keep you focused on popping Bloons!',
+                factEmoji: '🎈',
+                promptPrefix: 'bloonstd6'
+            },
+            epicrpg: {
+                primary: 'amber',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #2b1802 0%, #080400 100%)',
+                navBg: 'rgba(30, 18, 5, 0.7)',
+                accent: '#f59e0b',
+                vinylLabel: 'linear-gradient(135deg, #d97706 0%, #7c2d12 100%)',
+                logo: 'from-amber-600 to-amber-900',
+                mood: 'Epic Orchestral Fantasy',
+                fact: 'Did you know? Epic RPG soundtracks like Skyrim and Elden Ring are recorded using full professional live choirs singing in invented fantasy languages!',
+                factEmoji: '👑',
+                promptPrefix: 'epicrpg'
+            },
+            cyberpunk: {
+                primary: 'red',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #1e0303 0%, #030000 100%)',
+                navBg: 'rgba(25, 3, 3, 0.7)',
+                accent: '#ef4444',
+                vinylLabel: 'linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%)',
+                logo: 'from-red-500 to-slate-900',
+                mood: 'Industrial Cyberpunk Grid',
+                fact: 'Did you know? Mick Gordon synthesized real analog equipment with chainsaw recordings to create the revolutionary, aggressive soundtrack of DOOM!',
+                factEmoji: '🦾',
+                promptPrefix: 'cyberpunk'
+            },
+            techno: {
+                primary: 'cyan',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #062b32 0%, #020608 100%)',
+                navBg: 'rgba(5, 25, 30, 0.7)',
+                accent: '#06b6d4',
+                vinylLabel: 'linear-gradient(135deg, #22d3ee 0%, #0891b2 100%)',
+                logo: 'from-cyan-400 to-teal-600',
+                mood: 'Cyberpunk & Kinetic High-Speed',
+                fact: 'Did you know? Classic racing games like WipEout featured real vinyl rave classics from Prodigy & Chemical Brothers!',
+                factEmoji: '⚡',
+                promptPrefix: 'techno'
+            },
+            synthwave: {
+                primary: 'rose',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #2d0e20 0%, #040103 100%)',
+                navBg: 'rgba(25, 10, 20, 0.7)',
+                accent: '#f43f5e',
+                vinylLabel: 'linear-gradient(135deg, #fda4af 0%, #e11d48 100%)',
+                logo: 'from-rose-400 to-pink-600',
+                mood: 'Warm Retro Dreamscape',
+                fact: 'Did you know? Synthwave and Dreamcore retro aesthetics bring nostalgia from the 1980s back inside games like Hotline Miami!',
+                factEmoji: '🌌',
+                promptPrefix: 'synthwave'
+            },
+            space: {
+                primary: 'indigo',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%)',
+                navBg: 'rgba(15, 23, 42, 0.7)',
+                accent: '#6366f1',
+                vinylLabel: 'linear-gradient(135deg, #818cf8 0%, #4f46e5 100%)',
+                logo: 'from-indigo-400 to-indigo-600',
+                mood: 'Cosmic Music Cosmos',
+                fact: 'Did you know? Orchestral themes in game series like Super Mario Galaxy are recorded by 70+ piece grand live bands!',
+                factEmoji: '🪐',
+                promptPrefix: 'default'
+            },
+            rock: {
+                primary: 'red',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #3f0000 0%, #0a0000 100%)',
+                navBg: 'rgba(40, 5, 5, 0.7)',
+                accent: '#ef4444',
+                vinylLabel: 'linear-gradient(135deg, #f87171 0%, #b91c1c 100%)',
+                logo: 'from-red-500 to-red-800',
+                mood: 'High-Energy Stadium Rock',
+                fact: 'Did you know? Video game rock tracks often use real studio guitarists to record intense boss battles!',
+                factEmoji: '🎸',
+                promptPrefix: 'rock'
+            },
+            classical: {
+                primary: 'yellow',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #302b12 0%, #050400 100%)',
+                navBg: 'rgba(30, 25, 10, 0.7)',
+                accent: '#eab308',
+                vinylLabel: 'linear-gradient(135deg, #fde047 0%, #a16207 100%)',
+                logo: 'from-yellow-300 to-yellow-600',
+                mood: 'Grand Symphony Hall',
+                fact: 'Did you know? Orchestral game music is often recorded live with 70-piece symphonies!',
+                factEmoji: '🎻',
+                promptPrefix: 'classical'
+            },
+            lofi: {
+                primary: 'emerald',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #062f1e 0%, #010a05 100%)',
+                navBg: 'rgba(10, 30, 20, 0.7)',
+                accent: '#10b981',
+                vinylLabel: 'linear-gradient(135deg, #34d399 0%, #047857 100%)',
+                logo: 'from-emerald-400 to-emerald-700',
+                mood: 'Cozy Study Cafe',
+                fact: 'Did you know? Lo-Fi beats use vinyl crackle and detuned pianos to make things feel warm and nostalgic.',
+                factEmoji: '☕',
+                promptPrefix: 'lofi'
+            },
+            hiphop: {
+                primary: 'orange',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #3b1b06 0%, #0a0401 100%)',
+                navBg: 'rgba(40, 20, 10, 0.7)',
+                accent: '#f97316',
+                vinylLabel: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)',
+                logo: 'from-orange-400 to-orange-600',
+                mood: 'Urban Street Grooves',
+                fact: 'Did you know? Game hip-hop uses classic boom-bap drum machines from the 1990s!',
+                factEmoji: '🎧',
+                promptPrefix: 'hiphop'
+            },
+            pop: {
+                primary: 'pink',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #3b0726 0%, #0a0105 100%)',
+                navBg: 'rgba(40, 10, 25, 0.7)',
+                accent: '#ec4899',
+                vinylLabel: 'linear-gradient(135deg, #f472b6 0%, #be185d 100%)',
+                logo: 'from-pink-400 to-pink-600',
+                mood: 'Superstar Stage',
+                fact: 'Did you know? J-Pop in games often features famous voice actors singing the character themes!',
+                factEmoji: '🎤',
+                promptPrefix: 'pop'
+            },
+            pokemon: {
+                primary: 'red',
+                bgGradient: 'radial-gradient(circle at 50% 50%, #1e1b4b 0%, #000000 100%)',
+                navBg: 'rgba(30, 30, 60, 0.7)',
+                accent: '#ef4444',
+                vinylLabel: 'linear-gradient(135deg, #ef4444 50%, #ffffff 50%)',
+                logo: 'from-red-500 to-blue-500',
+                mood: '8-Bit Chiptune Adventure',
+                fact: 'Did you know? The original Pokémon games only had 4 sound channels to make all their music and sound effects!',
+                factEmoji: '⭐',
+                promptPrefix: 'pokemon'
+            }
+        };
+
+        // Shared Scoring Categories config for synchronized theme matching and database fallback
+        const scoringCategories = [
+            {
+                id: 'bloonstd6',
+                theme: 'bloonstd6',
+                strong: ['btd6', 'bloons', 'bloon', 'bloons td 6', 'street party', 'fiesta crater', 'sunshine shallot', 'tim haywood', 'pop', 'monkey', 'monkeys', 'dart monkey'],
+                weak: ['tropical', 'party', 'funky', 'brass', 'defense', 'balloon', 'balloons'],
+                response: `🎈 **Round Started! Welcome to the Bloons TD 6 Festival!** tim haywood has composed one of the absolute happiest, most infectious soundtracks ever created for a strategy game. Here are 3 tropical, funky tracks to share with your friends:
+            
+* 🎺 **"Street Party"** (Tropical Funk House) - An absolute fan-favorite! It combines driving summer percussion, acoustic guitar rhythms, and an incredibly catchy live brass and saxophone horn section hook that makes popping balloons feel like a parade.
+* 🍍 **"Sunshine Shallot"** (Upbeat Electro-Summer) - Warm, optimistic synthesizers and steel-drum textures that capture the bright, sunny feeling of a tropical resort map.
+* 🥁 **"Main Theme (BTD6)"** (Heroic Fanfare) - A marching drum-led adventure track starting with heroic horn fanfares that gets instantly stuck in your head while organizing your monkey defense!`
+            },
+            {
+                id: 'geometrydash',
+                theme: 'geometrydash',
+                strong: ['geometry dash', 'gd', 'at the speed of light', 'dimrain47', 'nine circles', 'nightkilla', 'rukkus', 'sonic blaster', 'f-777', 'bloodbath', 'cataclysm', 'sonic wave', 'tidal wave', 'onilink', 'kisaragi', 'alkaline', 'shiawase', 'aperture'],
+                weak: ['dash', 'cube', 'level', 'rhythm', 'electro', 'chiptune', 'demon', 'custom', 'mythic'],
+                response: `🟩 **Level Complete! Welcome to the Geometry Dash Custom Arena!** GD has introduced millions of players to incredible, high-octane electronic music through legendary custom online levels! Here are some of the most influential masterpieces:
+            
+* 🌌 **"Aperture"** (Sci-Fi Space Adventure) - A breathtaking custom level styled around futuristic portal travel! It features lightning-fast speed switches and gravity flips synced perfectly to a glittering, rapid-fire electronic arpeggiator song.
+* 🌊 **"Tidal Wave"** by **OniLink** (Song: "Shiawase" by Dion Timmer) - The sunny, beach-themed Extreme Demon that sits near the very top of the Demon List! It features bouncy, high-tempo, tropical electro-house beats that give a deceptively cheerful vibe to its insanely difficult gameplay.
+* 🌌 **"Kisaragi"** by **Alkaline** (Symphonic Chiptune / Space) - An absolute **Mythic-rated** classic level visual masterpiece! It features magnificent pixel-art of a futuristic sci-fi girl (Kisaragi) floating inside a space capsule, syncing to space-echoed chords and energetic synth lines.
+* 🎹 **"At the Speed of Light"** by **Dimrain47** (Symphonic Chiptune / Electro) - The legendary anthem of **Bloodbath** and **Cataclysm**! It features an intense blend of sweeping classical orchestra melodies and raging synth-bass arpeggios.
+* ⚡ **"Nine Circles"** by **NightKILLA** (Dubstep / Electro-Step) - The track that spawned an entire generation of wave-based flashing demon levels like **Nine Circles** and **Jawbreaker**! Known for its menacing build-up and heavy, distorted drops.`
+            },
+            {
+                id: 'pokemon',
+                theme: 'pokemon',
+                strong: ['pokemon', 'pocket monster', 'pokémon', 'pikachu', 'nintendo', 'gameboy', 'game boy', 'ds', 'cynthia', 'pallet town'],
+                weak: ['noise', 'theme'],
+                response: `⭐ **Gotta Match 'Em All!** Welcome to the **Pokémon Music Center**! 
+
+Pokémon games have some of the most legendary, genre-spanning musical masterpieces in video game history. Here are 3 incredible matching recommendations to share with your friends:
+                
+* 🎻 **"Pallet Town / Route 1"** (Orchestral / Acoustic Nostalgia) - A beautiful, sweeping acoustic guitar and live string track that perfectly replicates cozy classical, folk, and country music genres.
+* 🎷 **"Castelia City"** from **Pokémon Black & White** (Smooth City Jazz) - An incredibly catchy, bustling city theme filled with jazzy brass, walking upright bass, and a swinging big-band rhythm!
+* 🎸 **"Battle! Champion Cynthia"** from **Pokémon Diamond & Pearl** (Symphonic Rock) - An epic, fast-paced metal battle theme starting with a menacing piano intro that builds into roaring rock guitars and relentless drums!`
+            },
+            {
+                id: 'breakcore',
+                theme: 'breakcore',
+                strong: ['breakcore', 'break core', 'break-core', 'glitchcore', 'glitch core', 'dnb', 'drum and bass', 'drum & bass', 'neon white', 'ultrakill', 'machine girl', 'breackcore', 'brakcore'],
+                weak: ['glitch', 'noise', 'chaotic'],
+                response: `👋 Welcome to the **Breakcore Glitch frequency**! If your friend loves high-speed chopped breaks and glitch rhythms, they are going to LOVE these video game masterpieces:
+                
+* 👾 **"Glass Coffin"** from **Neon White** - Produced by Machine Girl. This is absolute gold-tier Breakcore! It mixes blistering, chaotic drum breaks with airy, atmospheric synth melodies. Perfect for demonstrating how energetic VGM can be!
+* 🌀 **"Machine in the Walls"** from **Ultrakill** - A masterful mix of metal riffs and chopped-up drum-and-bass breaks that keeps your heart pounding.
+* 🏃‍♂️ **"Chaoz Fantasy"** by ParagonX9 (famous in **Geometry Dash**) - An absolute classic featuring beautifully structured melodic breakcore rhythms.`
+            },
+            {
+                id: 'jazz',
+                theme: 'jazz',
+                strong: ['jazz', 'sax', 'trumpet', 'lounge', 'smooth', 'acid jazz', 'big band', 'swing', 'persona 5', 'beneath the mask'],
+                weak: ['brass', 'piano', 'instrumental'],
+                response: `👋 Welcome to the **Jazz Lounge frequency**! If your friend thinks game music is just 8-bit noise, play them these beautiful tracks to change their mind:
+                
+* 🎷 **"Beneath the Mask"** from **Persona 5** - A flawless late-night Acid Jazz record. It features a cozy Rhodes electric piano, smooth upright bass, and soulful vocals.
+* ☕ **"The Fragrance of Dark Coffee"** from **Phoenix Wright: Ace Attorney** - A nostalgic, moody bar-jazz piece led by a warm, crying saxophone melody.
+* 🍄 **"Staff Roll"** from **Super Mario 3D World** - A giant, energetic Big-Band jazz parade! Full of live brass sections and incredible instrumental swing solos.`
+            },
+            {
+                id: 'synthwave',
+                theme: 'synthwave',
+                strong: ['synthwave', 'synth wave', 'synth-wave', 'dreamcore', 'dream core', 'dream-core', 'retrowave', 'retro wave', 'hotline miami', 'celeste'],
+                weak: ['synth', 'sunset', 'retro', 'dream', 'basslines', 'nostalgia'],
+                response: `👋 Welcome to the **Dream & Synth retro frequency**! For fans of beautiful nostalgic synthesizers and neon sunsets:
+                
+* 🌌 **"Dust"** from **Hotline Miami** - The retro-electronic anthem that defined an era. Deep vintage basslines and sweeping pads.
+* 🌄 **"OutRun Retro Theme"** from **OutRun** - Fast, optimistic, vintage driving music that perfectly matches a retro vector landscape.
+* 🎈 **"Resurrections"** from **Celeste** - Starting as an ambient, dreamy lullaby on synthesizers, it builds up into a massive, emotion-packed arpeggio!`
+            },
+            {
+                id: 'techno',
+                theme: 'techno',
+                strong: ['techno', 'rave', 'house', 'electronic', 'edm', 'dance', 'club', 'cyberpunk', 'wipeout'],
+                weak: ['beats', 'tempo', 'clubs'],
+                response: `👋 Welcome to the **Techno Neon grid**! Here are three high-energy tracks that can compete with any festival stage:
+                
+* ⚡ **"Turbulence"** from **WipEout** - Relentless acid-synth sequences, classic 909 drum machines, and driving hypnotic rhythms.
+* 🏎️ **"Sloppy Lounge Drift"** from **Ridge Racer** - Smooth, classy house music with an atmospheric groove that makes driving feel like flying.
+* 🎛️ **"Stickerbush Symphony"** (Electronic Remix) from **Donkey Kong Country 2** - Dreamy, ambient house music featuring soothing synthesizer pads and gentle, rhythmic progressions.`
+            },
+            {
+                id: 'rock',
+                theme: 'rock',
+                strong: ['rock', 'metal', 'guitar', 'punk', 'heavy', 'sonic adventure', 'mega man', 'monster hunter'],
+                weak: ['drums', 'band'],
+                response: `🎸 Welcome to the **Rock & Guitar Arena**! If you love electric guitar solos and pounding rock drums, listen to these clean game masterpieces:
+                
+* 🎸 **"Live and Learn"** from **Sonic Adventure 2** - The ultimate high-energy rock theme. Outstanding vocals and a driving guitar riff that will pump anyone up!
+* ⚡ **"Storm Eagle Stage"** from **Mega Man X** - A legendary 16-bit rock anthem recreated with modern metal guitars.
+* 🦖 **"Proof of a Hero"** from **Monster Hunter** - A massive, heroic rock-orchestral piece with roaring brass and epic drum rhythms.`
+            },
+            {
+                id: 'classical',
+                theme: 'classical',
+                strong: ['classical', 'orchestra', 'orchestral', 'violin', 'symphony', 'mario galaxy', 'zelda', 'kingdom hearts'],
+                weak: ['piano', 'acoustic', 'instrumental'],
+                response: `🎻 Welcome to the **Classical Symphony Hall**! If you love breathtaking orchestral arrangements and live acoustic instruments:
+                
+* 🪐 **"Gusty Garden Galaxy"** from **Super Mario Galaxy** - A majestic, sweeping orchestral masterpiece. Recorded by a live 70+ piece symphony orchestra, it features soaring violins and uplifting brass!
+* 🗝️ **"Dearly Beloved"** from **Kingdom Hearts** - A beautiful, nostalgic piano-led arrangement that floats over gentle strings.
+* 🛡️ **"Zelda's Lullaby"** from **The Legend of Zelda: Ocarina of Time** - A gentle, magical classical harp and woodwind melody that is instantly recognizable.`
+            },
+            {
+                id: 'lofi',
+                theme: 'lofi',
+                strong: ['lofi', 'lo-fi', 'lo fi', 'chillhop', 'cozy', 'study', 'relax', 'calm', 'minecraft', 'stardew valley', 'animal crossing'],
+                weak: ['chill', 'quiet'],
+                response: `☕ Welcome to the **Cozy Lo-Fi Study Cafe**! If you love relaxing, laid-back beats to study or relax to:
+                
+* 🏡 **"5 PM"** from **Animal Crossing: New Horizons** - A super cozy acoustic guitar and electric piano tune perfect for relaxing after school.
+* ⛏️ **"Wet Hands"** from **Minecraft** - A gentle, flowing piano piece with quiet, warm background tones.
+* 🌾 **"Dance of the Moonlight Jellies"** from **Stardew Valley** - Beautiful, calming, and atmospheric synth-bubble beats that put your mind completely at ease.`
+            },
+            {
+                id: 'hiphop',
+                theme: 'hiphop',
+                strong: ['hiphop', 'hip hop', 'hip-hop', 'rap', 'r&b', 'groove', 'lethal league'],
+                weak: ['beats'],
+                response: `🎤 Welcome to the **Hip-Hop & Urban Beat Room**! If you love boom-bap, rap flow, and street grooves:
+                
+* 🎧 **"Mass Destruction"** from **Persona 3** - An incredibly catchy J-Hip-Hop track with rhythmic rap verses, clean vocal hooks, and an awesome funky bassline.
+* 🛼 **"Ain't Nothin' Like a Funky Beat"** from **Lethal League** - A high-energy, funky electronic hip-hop bop made by legendary composer Hideki Naganuma.
+* 🦑 **"Splatfest Groove"** from **Splatoon** - Clean, energetic urban grooves and vocal chops that will make you want to move.`
+            },
+            {
+                id: 'pop',
+                theme: 'pop',
+                strong: ['pop', 'vocal', 'j-pop', 'jpop', 'singing', 'singer', 'splatoon'],
+                weak: ['song'],
+                response: `🎤 Welcome to the **Superstar Pop Stage**! If you love catchy melodies, bright vocals, and J-Pop charts:
+                
+* 🌟 **"Calamari Inkantation"** from **Splatoon** - An insanely energetic, hyper-catchy fictional pop song with synth-brass and bubblegum pop vocals.
+* 🗝️ **"Simple and Clean"** from **Kingdom Hearts** - A legendary pop ballad sung by Utada Hikaru, featuring sweeping acoustic-electronic beats.
+* ✨ **"Reach Out To The Truth"** from **Persona 4** - An upbeat, cheerful pop-rock anthem that makes you feel unstoppable!`
+            },
+            {
+                id: 'epicrpg',
+                theme: 'epicrpg',
+                strong: ['epic', 'rpg', 'elder scrolls', 'skyrim', 'elden ring', 'souls', 'fantasy', 'choir', 'orchestra', 'orchestral', 'genshin', 'final fantasy', 'ff', 'dovahkiin'],
+                weak: ['horns', 'brass', 'choral', 'legendary', 'cinematic'],
+                response: `👑 **Adventure Awaits! Welcome to the Epic RPG Sanctuary!** RPG soundtracks are designed to make you feel like a legendary hero exploring vast, untamed lands. Here are 3 outstanding fantasy compositions to share with your friends:
+                
+* 🐉 **"Dragonborn"** from **The Legend of Zelda / Skyrim** - Timeless epic orchestration! A booming cinematic war choir chanting in an ancient tongue, backed by heavy brass and sweeping strings.
+* 🛡️ **"Main Theme"** from **Elden Ring** - Severe, dramatic, and soaring brass flourishes that underscore colossal, monumental boss fights.
+* 🌌 **"Prelude"** from **Final Fantasy** - A breathtakingly beautiful, harp-driven arpeggiator fantasy piece that represents magical cosmic wonder.`
+            },
+            {
+                id: 'cyberpunk',
+                theme: 'cyberpunk',
+                strong: ['cyberpunk', 'cyber punk', 'industrial', 'doom', 'mick gordon', 'cyberpunk 2077', 'synth', 'metal', 'saw', 'aggressive', 'portal', 'laser'],
+                weak: ['heavy', 'gritty', 'overdriven', 'distortion'],
+                response: `🦾 **System Override! Welcome to the Cyberpunk Grid!** Combining distorted industrial metal riffs, overdriven synthesizers, and crushing electronic beats, this genre makes action sequences feel incredibly intense. Here are 3 outstanding cyberpunk tracks to check out:
+                
+* 🎸 **"The Only Thing They Fear Is You"** from **DOOM Eternal** - Mick Gordon's masterpiece of "Industrial Metal Synth." Crushing 8-string guitars processed through analog distortion chains, backed by heavy electronic drum beats.
+* ⚡ **"Rebel Path"** from **Cyberpunk 2077** - Gritty cello runs layered with driving analog synthesizers and a relentless club-shattering warehouse kick beat.
+* ⚙️ **"Division Ruine"** by Carpenter Brut - A magnificent, dark synthwave / cyberpunk track that feels like a high-speed hovercar chase in a dystopian neon metropolis.`
+            }
+        ];
+
+        // On Load initialization
+        window.onload = function() {
+            // Find and cache the visualizer bar spans safely when the DOM is fully loaded
+            bars = document.querySelectorAll('#visualizerBars span');
+            
+            initAmbientCanvas();
+            setTheme('space');
+            
+            // Periodically bounce ambient elements slightly
+            setInterval(() => {
+                if (isPlaying) simulateVisualizer();
+            }, 100);
+        };
+
+        // Ambient Background Stars Space Rendering
+        const canvas = document.getElementById('ambientCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initAmbientCanvas() {
+            resizeCanvas();
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                createStars();
+            });
+            createStars();
+            animateAmbient();
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createStars() {
+            stars = [];
+            const count = Math.floor((canvas.width * canvas.height) / 8000);
+            const activeColor = themes[activeTheme].accent;
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5 + 0.5,
+                    opacity: Math.random() * 0.7 + 0.3,
+                    speed: Math.random() * 0.05 + 0.02
+                });
+            }
+        }
+
+        function animateAmbient() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const activeColor = themes[activeTheme].accent;
+            ctx.fillStyle = activeColor;
+            
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.globalAlpha = star.opacity;
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Drift stars slowly
+                star.y -= star.speed;
+                if (star.y < 0) {
+                    star.y = canvas.height;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+            
+            requestAnimationFrame(animateAmbient);
+        }
+
+        // Theme and Vibe Switcher
+        function setTheme(themeKey) {
+            activeTheme = themeKey;
+            const theme = themes[themeKey];
+            
+            // 1. Set main body background gradient
+            document.body.style.backgroundImage = theme.bgGradient;
+            
+            // 2. Set dynamic header colors
+            const navbar = document.getElementById('navbar');
+            navbar.style.backgroundColor = theme.navBg;
+            
+            // 3. Set visual indicators & glow colors
+            const disk = document.getElementById('vinylDisk');
+            disk.style.borderColor = `${theme.accent}30`;
+            disk.style.setProperty('--glow-color', theme.accent);
+            disk.classList.add('glowing-element');
+
+            const label = document.getElementById('vinylCenter');
+            label.style.background = theme.vinylLabel;
+
+            // 4. Update widget texts
+            document.getElementById('deckStatus').innerText = `Current Vibe: ${theme.mood}`;
+            document.getElementById('currentTrackGenre').innerText = `Listening on ${theme.mood} frequency`;
+            
+            // 5. Update Facts Deck
+            document.getElementById('factEmoji').innerText = theme.factEmoji;
+            document.getElementById('factLabel').innerText = `${themeKey.toUpperCase()} INSIGHT`;
+            document.getElementById('factText').innerText = theme.fact;
+
+            // Highlight chosen genre button, dim others
+            document.querySelectorAll('.genre-btn').forEach(btn => {
+                btn.classList.remove('bg-white/10', 'border-white/30', 'scale-105');
+            });
+            const activeBtn = document.getElementById(`btn-${themeKey}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white/10', 'border-white/30', 'scale-105');
+            }
+
+            // Remake star particles to match tone
+            createStars();
+
+            // If we are actively playing, update the synth tempo immediately to fit the style!
+            if (isPlaying) {
+                stopSynthLoop();
+                startSynthLoop();
+            }
+        }
+
+        // Initialise Audio Context on safe user click
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // 1. Create a Master Volume Node to prevent clipping
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = 0.5; // Smooth master volume
+                masterGain.connect(audioCtx.destination);
+
+                // 2. Create a Global Echo/Delay Effect! This makes it sound massive.
+                delayNode = audioCtx.createDelay();
+                delayNode.delayTime.value = 0.35; // 350ms echo
+                
+                feedbackNode = audioCtx.createGain();
+                feedbackNode.gain.value = 0.35; // 35% of the sound feeds back into the loop
+                
+                // Connect the delay loop
+                delayNode.connect(feedbackNode);
+                feedbackNode.connect(delayNode);
+                delayNode.connect(masterGain);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Procedural Audio Synthesizer Loop
+        function startSynthLoop() {
+            initAudio();
+            synthStep = 0;
+
+            // --- OPTIMIZED TEMPOS PER GENRE ---
+            let tempoSpeed = 400; 
+            if (activeTheme === 'space')        tempoSpeed = 600; // Ultra slow, cinematic breathing room
+            if (activeTheme === 'jazz')         tempoSpeed = 170; // Bouncy, swung 8th notes
+            if (activeTheme === 'geometrydash') tempoSpeed = 130; // High speed dynamic electro-house tempo
+            if (activeTheme === 'bloonstd6')    tempoSpeed = 240; // Playful, upbeat strategy tempo (125 BPM)
+            if (activeTheme === 'epicrpg')      tempoSpeed = 480; // Slow, majestic fantasy waltz pace
+            if (activeTheme === 'cyberpunk')    tempoSpeed = 260; // Industrial chugging metal-cyber tempo
+            if (activeTheme === 'techno')       tempoSpeed = 230; // Driving, hypnotic club warehouse pulse
+            if (activeTheme === 'synthwave')    tempoSpeed = 280; // Steady mid-tempo cyber-cruise
+            if (activeTheme === 'breakcore')    tempoSpeed = 85;  // Hyper-speed maniacal breakbeats
+            if (activeTheme === 'rock')         tempoSpeed = 190; // Hard-hitting, fast-driving rock anthem
+            if (activeTheme === 'classical')    tempoSpeed = 600; // Elegant waltz tempo
+            if (activeTheme === 'lofi')         tempoSpeed = 800; // Very slow and relaxed
+            if (activeTheme === 'hiphop')       tempoSpeed = 350; // Boom-bap bounce
+            if (activeTheme === 'pop')          tempoSpeed = 250; // Dance pop beat
+            if (activeTheme === 'pokemon')      tempoSpeed = 150; // Rapid retro 8-bit
+
+            // Clear any existing intervals and restart the clock
+            if (synthInterval) clearInterval(synthInterval);
+            
+            synthInterval = setInterval(() => {
+                if (!isPlaying) return;
+
+                // Clean finished playing nodes
+                activeNodes = activeNodes.filter(node => {
+                    try {
+                        return node.context.state !== 'closed';
+                    } catch(e) {
+                        return false;
+                    }
+                });
+
+                // Track bars/phrases (16 steps per bar)
+                const barStep = synthStep % 16;
+                const totalBars = Math.floor(synthStep / 16);
+                const chordProgressionIndex = totalBars % 4; // Cycles structures every 4 bars
+
+                // =================================================================
+                // 1. AMBIENT SPACE COSMOS (Generative, Lush, Floating Textures)
+                // =================================================================
+                if (activeTheme === 'space') {
+                    // Evolving chord pads (Root frequencies)
+                    const spaceChords = [
+                        [196.00, 293.66, 392.00, 493.88], // G Major 7 (Cosmic Open)
+                        [220.00, 329.63, 440.00, 523.25], // A Minor 7 (Deep space drift)
+                        [164.81, 246.94, 329.63, 392.00], // E Minor 7 (The void)
+                        [174.61, 261.63, 349.23, 440.00]  // F Major 7 (Nebula edge)
+                    ];
+                    const activePad = spaceChords[chordProgressionIndex];
+
+                    // Slow fading atmospheric pad chords
+                    if (barStep === 0) {
+                        activePad.forEach((freq, i) => {
+                            // Layered sine and triangle for a smooth glass-harmonics tone
+                            playTone(freq, 'sine', 2.5, 0.25, true, false, i * 4, 1.0);
+                            playTone(freq * 1.5, 'triangle', 3.0, 0.08, true, false, -i * 4, 1.5);
+                        });
+                    }
+
+                    // Generative, random stardust chimes on off-beats
+                    if (barStep % 3 !== 0 && Math.random() > 0.8) {
+                        const randomChime = activePad[Math.floor(Math.random() * activePad.length)] * 4;
+                        playTone(randomChime, 'sine', 0.4, 0.1, true, false, (Math.random() * 40 - 20), 0.2);
+                    }
+                }
+
+                // =================================================================
+                // 2. JAZZ LOUNGE (Dynamic Trio: Walking Bass, Improvising Brushes & Comping)
+                // =================================================================
+                else if (activeTheme === 'jazz') {
+                    // Classic Jazz II-V-I-VI progression frequencies
+                    const bassWalks = [
+                        [73.42, 87.31, 98.00, 110.00, 87.31, 73.42, 65.41, 55.00],  // Dm7 -> G7
+                        [65.41, 82.41, 98.00, 130.81, 123.47, 98.00, 82.41, 73.42], // Cmaj7 -> Am7
+                    ];
+                    const currentWalk = bassWalks[Math.floor(totalBars / 2) % bassWalks.length];
+
+                    // Walking Bassline (Plays on every quarter note / every 2 steps)
+                    if (barStep % 2 === 0) {
+                        const bassNote = currentWalk[Math.floor(barStep / 2) % currentWalk.length];
+                        playTone(bassNote, 'sine', 0.5, 0.25, false, false, 0, 0.04); // Deep wood body
+                        playTone(bassNote, 'triangle', 0.3, 0.06, false, true, 0, 0.01); // Finger pluck snap
+                    }
+
+                    // Electric Piano Syncopated Comping
+                    const pianoChords = [
+                        [146.83, 174.61, 220.00, 261.63], // Dm9
+                        [196.00, 246.94, 293.66, 349.23], // G13
+                        [130.81, 164.81, 196.00, 246.94], // Cmaj9
+                        [110.00, 138.59, 174.61, 220.00]  // A7alt
+                    ];
+                    
+                    // Humanized, unpredictable comping rhythms (favors jazz syncopations)
+                    const jazzSyncopations = [3, 6, 9, 14];
+                    if (jazzSyncopations.includes(barStep) && Math.random() > 0.3) {
+                        pianoChords[chordProgressionIndex].forEach(freq => {
+                            playTone(freq * 2, 'triangle', 0.5, 0.4, true, false, -10, 0.06);
+                            playTone(freq * 2, 'sine', 0.6, 0.5, true, false, 10, 0.06);
+                        });
+                    }
+
+                    // Swing Drums (Ride cymbal pattern: Ding... ding-a-ding)
+                    if (barStep % 4 === 0 || barStep % 4 === 2) {
+                        playNoiseClick(0.08, 0.02, 'highpass', 7000); // Main swing pulse
+                    }
+                    if (barStep % 4 === 3) {
+                        playNoiseClick(0.04 + Math.random() * 0.02, 0.01, 'highpass', 7500); // Swung skip note
+                    }
+                    // Snare drum light brush ghost notes
+                    if (barStep % 2 !== 0 && Math.random() > 0.7) {
+                        playNoiseClick(0.12, 0.008, 'bandpass', 2500);
+                    }
+                    // Muted acoustic kick drum on beat 1 and accents
+                    if (barStep === 0 || (barStep === 10 && Math.random() > 0.6)) {
+                        playKickDrum(false);
+                    }
+                }
+
+                // =================================================================
+                // 3. GEOMETRY DASH (High-Energy Electro Plucks, Anthem & Aperture Arps)
+                // =================================================================
+                else if (activeTheme === 'geometrydash') {
+                    // Classic 4-on-the-floor kick beat
+                    if (barStep % 4 === 0) playKickDrum(true); 
+
+                    // Electro-style snare with layered clap on 4 and 12
+                    if (barStep === 4 || barStep === 12) {
+                        playNoiseClick(0.15, 0.07, 'bandpass', 1200);
+                        playTone(220, 'triangle', 0.1, 0.04, false, true, 0, 0.01);
+                    }
+
+                    // Dynamic hi-hat patterns (Open hat on syncopated 3rd steps)
+                    if (barStep % 4 === 2) {
+                        playNoiseClick(0.18, 0.04, 'highpass', 8000); 
+                    } else if (barStep % 2 === 1) {
+                        playNoiseClick(0.04, 0.015, 'highpass', 9500); 
+                    }
+
+                    // Upbeat Progressive Electro-House Chord roots (C minor -> Ab major -> Eb major -> Bb major)
+                    const gdRoots = [130.81, 103.83, 155.56, 116.54]; // C3, Ab2, Eb3, Bb2
+                    const currentRoot = gdRoots[chordProgressionIndex];
+
+                    // Simulated "Sidechain" Pluck chord (Swells up rapidly after the kick hit to simulate compressor ducking)
+                    if (barStep % 4 === 1 || barStep % 4 === 3) {
+                        const chordFreqs = [currentRoot * 2, currentRoot * 2.4, currentRoot * 3]; // Triad
+                        chordFreqs.forEach((freq, idx) => {
+                            playTone(freq, 'sawtooth', 0.25, 0.04, true, true, idx * 5, 0.08); // Swell attack = 0.08s
+                        });
+                    }
+
+                    // Clean 8th-note Melodic Anthem Lead
+                    const melodyPattern = [12, 12, 15, 12, 19, 19, 17, 15, 17, 17, 15, 12, 10, 12, 15, 10];
+                    if (barStep % 2 === 0) {
+                        const leadNote = currentRoot * 2 * (Math.pow(2, melodyPattern[barStep] / 12));
+                        // Smooth layered progressive synth lead
+                        playTone(leadNote, 'sawtooth', 0.35, 0.05, true, false, -5, 0.02);
+                        playTone(leadNote, 'triangle', 0.35, 0.06, true, false, 5, 0.02);
+                    }
+
+                    // Aperture: Rapid-fire 16th-Note Chiptune Arpeggiator on the Off-Beat steps!
+                    if (barStep % 2 === 1) {
+                        const arpPattern = [0, 3, 7, 12, 7, 3, 12, 15];
+                        const arpNote = currentRoot * 4 * (Math.pow(2, arpPattern[barStep % arpPattern.length] / 12));
+                        playTone(arpNote, 'square', 0.06, 0.015, true, false, 0, 0.005);
+                    }
+
+                    // Random retro jump blips to emulate the player jumping over obstacles
+                    if (Math.random() > 0.85 && barStep % 2 === 1) {
+                        playTone(880, 'sine', 0.06, 0.03, false, true, 0, 0.005); 
+                    }
+
+                    // Laser sweeps (gravity portals) at the end of the phrase
+                    if (barStep === 15) {
+                        playGlitchSlide(1200, 300, 0.1); 
+                    }
+                }
+
+                // =================================================================
+                // 4. BLOONS TD 6 (Funky Tropical Party - Bouncy Brass & Balloon Pops!)
+                // =================================================================
+                else if (activeTheme === 'bloonstd6') {
+                    // Bouncy, happy pop-party kick and snare
+                    if (barStep % 4 === 0) playKickDrum(false); // Playful soft kick
+                    if (barStep === 4 || barStep === 12) {
+                        playNoiseClick(0.1, 0.06, 'bandpass', 2200); // Snappy rimshot snare
+                    }
+
+                    // Upbeat "COMPING" Balloon Pops! High-pass clicks simulating popping balloons on off-beats
+                    if (barStep % 2 === 1 && Math.random() > 0.4) {
+                        playNoiseClick(0.02, 0.04, 'highpass', 9500); 
+                    }
+
+                    // Funky Swung Upright/Synth Bass (Tropical G major -> C major progression)
+                    const btdRoots = [98.00, 130.81, 110.00, 116.54]; // G2, C3, A2, Bb2
+                    const currentRoot = btdRoots[chordProgressionIndex];
+
+                    // Playful jumping syncopated bassline
+                    const bassPattern = [0, 2, 3, 5];
+                    if (barStep % 2 === 0) {
+                        const bassNote = currentRoot * (1 + (bassPattern[Math.floor(barStep / 4) % bassPattern.length] / 12));
+                        playTone(bassNote, 'triangle', 0.22, 0.18, false, true, 0, 0.02);
+                        playTone(bassNote, 'sine', 0.25, 0.12, false, false, 3, 0.03);
+                    }
+
+                    // Bright, Cheerful Horn/Brass Lead melody running overhead! (Tim Haywood style)
+                    // Progression melody: Swung 8th notes simulating a bouncy trumpet/sax hook
+                    const hornMelody = [0, 4, 7, 12, 11, 7, 4, 7, 9, 7, 9, 12, 7, 4, 2, 0];
+                    if (barStep % 2 === 0 && Math.random() > 0.1) {
+                        const noteVal = hornMelody[barStep];
+                        const hornNote = currentRoot * 3 * (Math.pow(2, noteVal / 12));
+                        // Mix triangle & detuned sine for a warm, brass-like roundness
+                        playTone(hornNote, 'triangle', 0.25, 0.08, true, false, -8, 0.05);
+                        playTone(hornNote, 'sine', 0.25, 0.06, true, false, 8, 0.05);
+                    }
+                }
+
+                // =================================================================
+                // 5. EPIC RPG (Cinematic Orchestral Swells & Booming War Drums)
+                // =================================================================
+                else if (activeTheme === 'epicrpg') {
+                    // Slow, heavy cinematic drum kit (Gong-like clap + booming sub kick)
+                    if (barStep % 8 === 0) playKickDrum(true);
+                    if (barStep === 4 || barStep === 12) {
+                        playNoiseClick(0.35, 0.08, 'bandpass', 1000); // Thudding low-register clap
+                    }
+
+                    // Harmonic natural-minor chord pads (A minor -> G major -> F major -> E minor)
+                    const rpgRoots = [110.00, 98.00, 87.31, 82.41]; // A2, G2, F2, E2
+                    const activeRoot = rpgRoots[chordProgressionIndex];
+
+                    // Slow Choral & Horn brass swells (Every 4 beats)
+                    if (barStep % 4 === 0) {
+                        const choirChord = [activeRoot * 2, activeRoot * 2.4, activeRoot * 3]; // Classical triads
+                        choirChord.forEach((freq, idx) => {
+                            // Slow 0.4s attack to mimic blowing brass instruments or a vocal choir swelling
+                            playTone(freq, 'sine', 1.6, 0.08, true, false, idx * 8, 0.40);
+                            playTone(freq * 1.5, 'triangle', 1.4, 0.04, true, false, -idx * 8, 0.45);
+                        });
+                    }
+
+                    // Echoing high violin staccato runs (arpeggiating overhead)
+                    const stringPattern = [0, 4, 7, 12, 11, 7, 12, 16];
+                    if (barStep % 2 === 1 && Math.random() > 0.4) {
+                        const runFreq = activeRoot * 4 * (Math.pow(2, stringPattern[barStep % stringPattern.length] / 12));
+                        playTone(runFreq, 'sine', 0.4, 0.03, true, false, 15, 0.15); // Moderate bow drag attack
+                    }
+                }
+
+                // =================================================================
+                // 6. INDUSTRIAL CYBERPUNK (Dystopian Saw Chugs & Heavy Metal Kicks)
+                // =================================================================
+                else if (activeTheme === 'cyberpunk') {
+                    // Slow, crushing half-time metal beats
+                    if (barStep % 8 === 0 || barStep === 10) playKickDrum(true); // Aggressive kick pattern
+                    if (barStep === 4 || barStep === 12) {
+                        playNoiseClick(0.35, 0.18, 'bandpass', 1400); // Harsh industrial cracking snare
+                        playTone(180, 'square', 0.2, 0.06, false, true, 0, 0.01);
+                    }
+
+                    // Aggressive, distorted saw-wave bass chord chugs (DOOM style)
+                    // Progression: Low Eb -> F -> G -> C
+                    const cyberpunkRoots = [77.78, 87.31, 98.00, 130.81]; // Eb2, F2, G2, C3
+                    const activeBass = cyberpunkRoots[chordProgressionIndex];
+
+                    // Chugging driving bass pattern (Heavy metal groove)
+                    const bassChugPattern = [1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1];
+                    if (bassChugPattern[barStep] === 1) {
+                        // Stack multiple detuned sawtooths for a brutal overdriven wall of sound
+                        [-12, 0, 12].forEach(detune => {
+                            playTone(activeBass / 2, 'sawtooth', 0.25, 0.06, false, true, detune, 0.01);
+                        });
+                    }
+
+                    // Random high pitch warning-sirens or system failure digital zaps
+                    if (barStep === 15 && totalBars % 2 === 1) {
+                        playGlitchSlide(1500, 100, 0.08); // downward laser warp
+                    }
+                }
+
+                // =================================================================
+                // 7. TECHNO WAREHOUSE (Sub-Heavy Kick, Hypnotic Underground Loops)
+                // =================================================================
+                else if (activeTheme === 'techno') {
+                    // Uncompromising 4-on-the-floor heavy club kick drum
+                    if (barStep % 4 === 0) {
+                        playKickDrum(true); 
+                    }
+
+                    // Open Hi-Hat on the off-beat (The signature techno drive)
+                    if (barStep % 4 === 2) {
+                        playNoiseClick(0.22, 0.12, 'highpass', 6500);
+                    }
+
+                    // Hypnotic, rolling 16th-note closed hat patterns with slight humanized velocity
+                    if (barStep % 4 !== 2 && Math.random() > 0.4) {
+                        playNoiseClick(0.06 + (barStep % 2 === 0 ? 0.04 : 0), 0.02, 'highpass', 9000);
+                    }
+
+                    // Dark Evolving Acid Bassline (Locks to a driving hypnotic rhythm)
+                    const technoRoots = [55.00, 55.00, 48.99, 65.41]; // A -> A -> G -> C
+                    const acidRoot = technoRoots[chordProgressionIndex];
+                    
+                    // Driving rhythmic bass groove
+                    const technoBassPattern = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0];
+                    if (technoBassPattern[barStep] === 1) {
+                        // High filter resonance simulation using a sharp sawtooth
+                        const bassOctave = (barStep % 6 === 0) ? acidRoot * 2 : acidRoot; // Dynamic accents
+                        playTone(bassOctave, 'sawtooth', 0.28, 0.12, false, true, 0, 0.01);
+                    }
+                }
+
+                // =================================================================
+                // 8. SYNTHWAVE SUNSET (Outrun Cyber Cruise, Gated Drums & Chugging Bass)
+                // =================================================================
+                else if (activeTheme === 'synthwave') {
+                    // Outrun Cyber-Chord Progression: Em -> Cmaj -> Dmaj -> Bmin
+                    const synthwaveRoots = [82.41, 65.41, 73.42, 61.74];
+                    const currentRoot = synthwaveRoots[chordProgressionIndex];
+
+                    // Iconic "Chugging" 8th note rolling bassline
+                    if (barStep % 2 === 0) {
+                        const alternateOctave = (barStep % 4 === 0) ? currentRoot : currentRoot * 2;
+                        playTone(alternateOctave, 'sawtooth', 0.35, 0.14, false, true, 0, 0.02);
+                    }
+
+                    // Retro Gated Snares and Kicks
+                    if (barStep === 0 || barStep === 8) playKickDrum(true);
+                    if (barStep === 4 || barStep === 12) {
+                        // Layer noise and low tones to create a massive 1980s retro snare strike
+                        playNoiseClick(0.4, 0.22, 'bandpass', 1200);
+                        playTone(180, 'triangle', 0.5, 0.15, false, true, 0, 0.02);
+                    }
+
+                    // Bright Neon Lead Melodies running overhead
+                    const neonMelody = [currentRoot*4, currentRoot*5, currentRoot*6, currentRoot*7];
+                    if (barStep % 4 === 0) {
+                        const leadNote = neonMelody[(barStep / 4 + totalBars) % neonMelody.length];
+                        playTone(leadNote, 'square', 0.2, 0.4, true, false, -8, 0.05);
+                        playTone(leadNote * 1.005, 'square', 0.2, 0.4, true, false, 8, 0.05); // Wide detuned stereo chorus effect
+                    }
+                }
+
+                // =================================================================
+                // 9. BREAKCORE GLITCH (Maniacal Structured Amen Beats & Pitch Choppers)
+                // =================================================================
+                else if (activeTheme === 'breakcore') {
+                    // Clean, highly-syncopated surgical Amen Break drum patterns
+                    // Heavy kicks on syncopations
+                    if (barStep === 0 || barStep === 3 || barStep === 9 || barStep === 11) {
+                        playKickDrum(true); 
+                    }
+                    // Hard clashing industrial snare chops
+                    if (barStep === 4 || barStep === 10 || barStep === 12 || barStep === 14) {
+                        playNoiseClick(0.35, 0.07, 'highpass', 3500); 
+                    }
+                    // Blistering fast erratic hi-hat glitching rolls
+                    if (barStep % 2 === 0 || Math.random() > 0.6) {
+                        playNoiseClick(0.08, 0.015, 'highpass', 8500);
+                    }
+
+                    // Heavy, distorted square-wave bassline that tracks aggressively
+                    if (barStep % 2 === 0) {
+                        const hardcoreBass = [55.00, 110.00, 65.41, 130.81, 48.99, 97.99, 73.42, 146.83];
+                        const note = hardcoreBass[(Math.floor(synthStep / 2)) % hardcoreBass.length];
+                        playTone(note, 'square', 0.22, 0.08, false, true, 0, 0.01);
+                    }
+
+                    // End of phrase laser glitch zaps (Zaps downward wildly)
+                    if (totalBars % 2 === 1 && barStep > 12) {
+                        playGlitchSlide(900, 80, 0.04);
+                    }
+                }
+
+                // =================================================================
+                // 10. ROCK & METAL (Heavy Power Chords, Double-Bass Drum Kits)
+                // =================================================================
+                else if (activeTheme === 'rock') {
+                    // Heavy Descending Alt-Rock Chord Progression (E -> D -> C -> B)
+                    const rockRoots = [82.41, 73.42, 65.41, 61.74];
+                    const activeRoot = rockRoots[chordProgressionIndex];
+
+                    // Chugging Wall-of-Sound Overdriven Guitars (Simulated via overlapping sawtooth waves)
+                    if (barStep % 4 === 0 || barStep % 8 === 3) {
+                        // Play heavy power chord intervals (Root + Perfect 5th + Octave)
+                        const powerChord = [activeRoot, activeRoot * 1.5, activeRoot * 2];
+                        powerChord.forEach((freq, index) => {
+                            playTone(freq, 'sawtooth', 0.35, 0.5, true, false, -15 + (index * 15), 0.02);
+                            playTone(freq * 0.995, 'sawtooth', 0.25, 0.5, true, false, 15 - (index * 15), 0.03); // Thick detuning
+                        });
+                    }
+
+                    // Double-Bass Thrash Metal Drum Patterns
+                    // Double bass pedal pounding constantly underneath
+                    if (barStep % 4 === 0 || barStep % 4 === 1 || barStep % 8 === 6) {
+                        playKickDrum(true);
+                    }
+                    // Hard cracking center snare hits on 4 and 12
+                    if (barStep === 4 || barStep === 12) {
+                        playNoiseClick(0.45, 0.15, 'bandpass', 1600);
+                        playTone(210, 'triangle', 0.4, 0.08, false, true, 0, 0.01);
+                    }
+                    // Driving heavy open crash cymbal on the downbeat of every chord change
+                    if (barStep === 0) {
+                        playNoiseClick(0.25, 0.4, 'highpass', 5000);
+                    }
+                }
+
+                // =================================================================
+                // 11. CLASSICAL ORCHESTRA (Modulating Strings)
+                // =================================================================
+                else if (activeTheme === 'classical') {
+                    const base = (totalBars % 2 === 0) ? 261.63 : 349.23; // C to F
+                    const classicalNotes = [base, base*1.259, base*1.498, base*2, base*1.498, base*1.259]; 
+                    const note = classicalNotes[synthStep % classicalNotes.length];
+                    playTone(note, 'sine', 1.2, 0.08, true, false, 0, 0.3); 
+                    playTone(note * 2, 'triangle', 1.2, 0.04, true, false, 2, 0.3); 
+                }
+
+                // =================================================================
+                // 12. LO-FI CHILLHOP (Warm chords & vinyl crackle)
+                // =================================================================
+                else if (activeTheme === 'lofi') {
+                    const lofiChordsA = [174.61, 220.00, 261.63, 329.63]; // Fmaj7
+                    const lofiChordsB = [130.81, 164.81, 196.00, 246.94]; // Cmaj7
+                    const activeChord = (totalBars % 2 === 0) ? lofiChordsA : lofiChordsB;
+
+                    if (barStep % 4 === 0) {
+                        activeChord.forEach(freq => playTone(freq, 'sine', 1.5, 0.04, false, true, 0, 0.03));
+                    }
+                    if (Math.random() > 0.3) playNoiseClick(0.05, 0.005, 'lowpass', 2000); 
+                }
+
+                // =================================================================
+                // 13. HIP-HOP URBAN (Sub Bass drops & Ghost notes)
+                // =================================================================
+                else if (activeTheme === 'hiphop') {
+                    if (barStep % 4 === 0) playKickDrum(true);
+                    if (barStep === 11) playKickDrum(false); // Ghost kick
+                    if (barStep % 4 === 2) playNoiseClick(0.1, 0.04, 'highpass', 2000); 
+                    if (barStep === 14) playNoiseClick(0.05, 0.02, 'highpass', 2000); // Ghost snare
+                    if (synthStep % 1 === 0) playNoiseClick(0.03, 0.01, 'highpass', 9000); // Hi hat
+                    
+                    if (barStep === 0) {
+                        const subFreq = (totalBars % 2 === 0) ? 55.00 : 43.65; // Drops from A1 to F1
+                        playTone(subFreq, 'sine', 1.5, 0.2, false, false, 0, 0.05); 
+                    }
+                }
+
+                // =================================================================
+                // 14. POP SUPERSTAR (4-Chord Loop & Syncopation)
+                // =================================================================
+                else if (activeTheme === 'pop') {
+                    if (barStep % 2 === 0) playKickDrum(false);
+                    if (barStep % 2 === 1) playNoiseClick(0.08, 0.03, 'highpass', 3000); 
+
+                    const popChords = [
+                        [261.63, 329.63, 392.00], // C
+                        [196.00, 246.94, 293.66], // G
+                        [220.00, 261.63, 329.63], // Am
+                        [174.61, 220.00, 261.63]  // F
+                    ];
+                    const chord = popChords[chordProgressionIndex]; 
+                    
+                    if (barStep % 2 === 0 || barStep === 7) { 
+                        chord.forEach(freq => playTone(freq, 'triangle', 0.3, 0.05, true, true, 0, 0.02));
+                    }
+                }
+
+                // =================================================================
+                // 15. POKEMON 8-BIT (A/B Melodies & Bass)
+                // =================================================================
+                else if (activeTheme === 'pokemon') {
+                    const pokemonMelodyA = [523.25, 587.33, 659.25, 783.99, 659.25, 0, 523.25, 587.33];
+                    const pokemonMelodyB = [659.25, 783.99, 880.00, 1046.50, 880.00, 783.99, 659.25, 587.33]; 
+                    
+                    const activeMelody = (totalBars % 2 === 0) ? pokemonMelodyA : pokemonMelodyB;
+                    const note = activeMelody[synthStep % activeMelody.length];
+                    
+                    if (note > 0) playTone(note, 'square', 0.15, 0.03, false, false, 0, 0.01); 
+                    
+                    if (barStep % 2 === 0) playTone(130.81, 'square', 0.1, 0.02, false, false, 0, 0.01);
+                    if (barStep % 4 === 0) playNoiseClick(0.03, 0.015, 'highpass', 4000);
+                }
+
+                // Advance system step counts
+                synthStep++;
+            }, tempoSpeed);
+        }
+
+        function stopSynthLoop() {
+            if (synthInterval) {
+                clearInterval(synthInterval);
+                synthInterval = null;
+            }
+            // Mute and clean active nodes
+            activeNodes.forEach(node => {
+                try { node.stop(); } catch(e){}
+            });
+            activeNodes = [];
+        }
+
+        // Web Audio helper: Generate studio-grade synth notes with optional Analog Pluck Envelopes, Echo, and ATTACK!
+        function playTone(freq, type, duration, volume, useDelay = false, isPluck = false, detune = 0, attack = 0.01) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                if (detune !== 0) osc.detune.value = detune;
+
+                // ADSR Volume Envelope (Attack & Decay)
+                // This makes violins swell slowly, and pianos strike quickly!
+                gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime); // Start silent
+                gainNode.gain.exponentialRampToValueAtTime(volume, audioCtx.currentTime + attack); // Swell up to volume
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration); // Fade out
+
+                let finalNode = gainNode;
+
+                // Add an analog-style lowpass filter
+                if (isPluck) {
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(freq * 8, audioCtx.currentTime); 
+                    filter.frequency.exponentialRampToValueAtTime(freq * 1.2, audioCtx.currentTime + duration * 0.6); 
+                    filter.Q.value = 8; 
+                    
+                    gainNode.connect(filter);
+                    finalNode = filter;
+                }
+
+                // Connect to master volume and optional echo
+                finalNode.connect(masterGain);
+                if (useDelay && delayNode) {
+                    finalNode.connect(delayNode);
+                }
+
+                osc.connect(gainNode);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+                activeNodes.push(osc);
+            } catch(e) {}
+        }
+
+        // Web Audio helper: Generate synthetic bass/kick sweep
+        function playKickDrum(heavy = false) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                // Start higher for a sharper "click" attack if heavy
+                const startFreq = heavy ? 300 : 150;
+                osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
+                // Fix: Stop dropping to 0Hz! Drop to 45Hz so the subwoofer physically thumps.
+                osc.frequency.exponentialRampToValueAtTime(heavy ? 45 : 55, audioCtx.currentTime + 0.1);
+
+                const volume = heavy ? 0.6 : 0.3;
+                gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+
+                osc.connect(gainNode);
+                gainNode.connect(masterGain);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+                activeNodes.push(osc);
+            } catch(e) {}
+        }
+
+        // Web Audio helper: Synthesised high-frequency snare snaps/hi-hat clicks (Upgraded with filters)
+        function playNoiseClick(duration, volume, filterType = 'highpass', filterFreq = 7000) {
+            try {
+                const bufferSize = audioCtx.sampleRate * duration;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+                // Pass through dynamic filter to make it sound like hi-hats or snares!
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = filterType;
+                filter.frequency.value = filterFreq;
+
+                noise.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(masterGain);
+
+                noise.start();
+                noise.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // Web Audio helper: Breakcore pitch slide sweeps
+        function playGlitchSlide(startFreq, endFreq, duration) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(endFreq, audioCtx.currentTime + duration);
+
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+                osc.connect(gainNode);
+                gainNode.connect(masterGain);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+                activeNodes.push(osc);
+            } catch(e) {}
+        }
+
+        // Animated soundwave bars
+        function simulateVisualizer() {
+            // Guard clause to ensure elements are present and not throwing ReferenceErrors
+            if (!bars || bars.length === 0) {
+                bars = document.querySelectorAll('#visualizerBars span');
+            }
+            bars.forEach(bar => {
+                const height = Math.floor(Math.random() * 26) + 8; // Random height 8 to 34px
+                bar.style.height = `${height}px`;
+                bar.style.backgroundColor = themes[activeTheme].accent;
+            });
+        }
+
+        // Reset visualizer bars back to default inactive layout
+        function resetVisualizer() {
+            if (!bars || bars.length === 0) {
+                bars = document.querySelectorAll('#visualizerBars span');
+            }
+            bars.forEach(bar => {
+                bar.style.height = `8px`;
+                bar.style.backgroundColor = 'rgb(100 116 139)'; // Slate gray
+            });
+        }
+
+        // Simulated Play/Pause visual controls
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const needle = document.getElementById('recordNeedle');
+            const disk = document.getElementById('vinylDisk');
+            const playIcon = document.getElementById('playIcon');
+            const statusIndicator = document.getElementById('deckIndicator');
+
+            if (isPlaying) {
+                // Play Action
+                needle.style.transform = 'translate(0px, 0px) rotate(15deg)';
+                disk.classList.remove('spinning-paused');
+                playIcon.className = 'fa-solid fa-pause';
+                statusIndicator.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+                
+                // Active visualizer animation
+                visualizerInterval = setInterval(simulateVisualizer, 100);
+
+                // Start Procedural Web Audio Synth loops!
+                startSynthLoop();
+            } else {
+                // Pause Action
+                needle.style.transform = 'translate(16px, 0px) rotate(-12deg)';
+                disk.classList.add('spinning-paused');
+                playIcon.className = 'fa-solid fa-play ml-1';
+                statusIndicator.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+                
+                // Clear active animation
+                clearInterval(visualizerInterval);
+                resetVisualizer();
+
+                // Stop active Audio Synth!
+                stopSynthLoop();
+            }
+        }
+
+        function randomFeedback() {
+            if (isPlaying) {
+                simulateVisualizer();
+            }
+        }
+
+        // Modal triggers
+        function showModal(title, text, isSuccess = false) {
+            const modal = document.getElementById('statusModal');
+            const icon = document.getElementById('modalIcon');
+            const titleEl = document.getElementById('modalTitle');
+            const descEl = document.getElementById('modalDesc');
+
+            if (isSuccess) {
+                icon.className = "w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-2xl mx-auto mb-4";
+                icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            } else {
+                icon.className = "w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center text-2xl mx-auto mb-4";
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            }
+            titleEl.innerText = title;
+            descEl.innerText = text;
+            modal.classList.remove('hidden');
+        }
+
+        // closeModal
+        function closeModal() {
+            document.getElementById('statusModal').classList.add('hidden');
+        }
+
+        // Quick Prompts Overlay Trigger
+        function showQuickPrompts() {
+            document.getElementById('quickPromptModal').classList.remove('hidden');
+        }
+
+        // hideQuickPrompts
+        function hideQuickPrompts() {
+            document.getElementById('quickPromptModal').classList.add('hidden');
+        }
+
+        function selectPreset(promptText) {
+            hideQuickPrompts();
+            submitPrompt(promptText);
+        }
+
+        // User Message Submission Setup
+        function submitPrompt(text) {
+            document.getElementById('userInput').value = text;
+            handleSend(new Event('submit'));
+        }
+
+        async function handleSend(event) {
+            event.preventDefault();
+            const inputField = document.getElementById('userInput');
+            const userText = inputField.value.trim();
+            if (!userText) return;
+
+            // Dynamic background shift detection inside chat input
+            detectAndShiftTheme(userText);
+
+            // Add user bubble to chat feed
+            appendMessage(userText, 'user');
+            inputField.value = '';
+
+            // Clean suggestion chips after first interaction
+            const chips = document.getElementById('quickChipsContainer');
+            if (chips) chips.remove();
+
+            // Set loading spinner on input state
+            const sendBtn = document.getElementById('sendBtn');
+            const sendIcon = document.getElementById('sendIcon');
+            sendBtn.disabled = true;
+            sendIcon.className = "fa-solid fa-circle-notch animate-spin";
+
+            // Scroll chat
+            scrollToBottom();
+
+            // Setup temporary bot writing bubble
+            const loadingBubbleId = appendLoadingBubble();
+
+            try {
+                const aiResponse = await callGeminiAI(userText);
+                removeLoadingBubble(loadingBubbleId);
+                appendMessage(aiResponse, 'bot');
+                
+                // Auto-start music visualizer simulation upon successfully generating fresh matches
+                if (!isPlaying) togglePlay(); 
+                
+            } catch (err) {
+                removeLoadingBubble(loadingBubbleId);
+                appendMessage(`⚠️ **System Issue:** ${err.message}`, 'error');
+                showModal("Analysis Issue", "We ran into an connection delay. Please ensure you are online and try again!", false);
+            } finally {
+                sendBtn.disabled = false;
+                sendIcon.className = "fa-solid fa-paper-plane";
+                scrollToBottom();
+            }
+        }
+
+        // Ultra-Smart synchronised Theme shifter based on Category Weights
+        function detectAndShiftTheme(text) {
+            const lower = text.toLowerCase();
+            let bestTheme = 'space';
+            let maxScore = 0;
+
+            scoringCategories.forEach(cat => {
+                let score = 0;
+                cat.strong.forEach(kw => {
+                    if (lower.includes(kw)) score += 10;
+                });
+                if (cat.weak) {
+                    cat.weak.forEach(kw => {
+                        if (lower.includes(kw)) score += 1;
+                    });
+                }
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestTheme = cat.theme;
+                }
+            });
+
+            if (maxScore > 0) {
+                setTheme(bestTheme);
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const feed = document.getElementById('chatFeed');
+            const messageRow = document.createElement('div');
+            messageRow.className = sender === 'user' ? "max-w-[85%] self-end text-right" : "max-w-[85%] self-start flex gap-3";
+
+            // Format markdown-like bold and bullet formatting coming from generative model
+            const formattedText = formatMarkdown(text);
+
+            if (sender === 'user') {
+                messageRow.innerHTML = `
+                    <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none p-4 text-sm text-left leading-relaxed inline-block shadow-lg shadow-indigo-500/10">
+                        ${formattedText}
+                    </div>
+                `;
+            } else if (sender === 'bot') {
+                const icon = themes[activeTheme].factEmoji;
+                messageRow.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-white/10 flex-shrink-0 flex items-center justify-center text-xs text-white">
+                        ${icon}
+                    </div>
+                    <div class="bg-white/5 border border-white/10 text-slate-100 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed flex-1">
+                        ${formattedText}
+                    </div>
+                `;
+            } else { // Error mode
+                messageRow.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/30 flex-shrink-0 flex items-center justify-center text-xs text-rose-400">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </div>
+                    <div class="bg-rose-500/10 border border-rose-500/20 text-rose-200 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed flex-1">
+                        ${formattedText}
+                    </div>
+                `;
+            }
+
+            feed.appendChild(messageRow);
+        }
+
+        // Setup temporary bot writing bubble
+        function appendLoadingBubble() {
+            const feed = document.getElementById('chatFeed');
+            const bubbleId = 'loading-' + Date.now();
+            const messageRow = document.createElement('div');
+            messageRow.id = bubbleId;
+            messageRow.className = "max-w-[85%] self-start flex gap-3";
+            messageRow.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-white/10 flex-shrink-0 flex items-center justify-center text-xs text-slate-400">
+                    <i class="fa-solid fa-spinner animate-spin"></i>
+                </div>
+                <div class="bg-white/5 border border-white/10 text-slate-400 rounded-2xl rounded-tl-none p-4 text-sm leading-relaxed flex-1">
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-space font-semibold text-xs tracking-wider animate-pulse">AI is scanning the music universe...</span>
+                    </div>
+                </div>
+            `;
+            feed.appendChild(messageRow);
+            return bubbleId;
+        }
+
+        // Remove loading spinner bubble
+        function removeLoadingBubble(id) {
+            const bubble = document.getElementById(id);
+            if (bubble) bubble.remove();
+        }
+
+        // Auto Scroll to bottom
+        function scrollToBottom() {
+            const feed = document.getElementById('chatFeed');
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function formatMarkdown(text) {
+            // Replaces stars with bullet structures and ** with bold tags
+            let html = text
+                .replace(/\*\/(.*?)\*\//g, '<strong>$1</strong>') // Handle generic matches
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^\*\s(.*)/gm, '• $1')
+                .replace(/\n/g, '<br>');
+            return html;
+        }
+
+        // Complete robust Gemini API integration with standard retry logic (exponential backoff)
+        async function callGeminiAI(userQuery) {
+            // Resolve key dynamically using runtime auto-injection structures
+            const resolvedKey = apiKey || (typeof __api_key !== 'undefined' ? __api_key : '');
+            
+            const modelName = 'gemini-2.5-flash-preview-09-2025';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${resolvedKey}`;
+
+            const systemPrompt = `
+                You are "The Universe of Music Finder AI", created by the hackathon team "Music Finders".
+                Your job is to act as a brilliant music-coaching partner to show people that video game music is a legitimate, beautiful form of art.
+                
+                The user is a teenager under 18 years old, so keep all recommendations and descriptions safe, clean, educational, inspiring, and completely appropriate. Avoid any topics involving harm or suggestive content.
+                
+                The user's friend typically believes video game music is "just random noise." The user will provide a genre or a specific game reference (e.g., Jazz, Synthwave, Techno, Classical, Breakcore, Rock, Lo-Fi, Hip-Hop, Pop, Pokemon, Geometry Dash, Bloons TD 6 / BTD6, Epic RPG, Cyberpunk).
+                
+                Your objective:
+                1. Always recommend 3 matching Video Game Music (VGM) tracks that perfectly parallel their favorite music or fit their query.
+                2. Explain with high enthusiasm exactly *why* they match (rhythm, instruments, chords, mood).
+                3. Keep your advice friendly, high energy, structured, and extremely accessible. Do not use complex jargon. 
+                
+                Format your responses neatly:
+                - Use a friendly welcome.
+                - Bold track names and Game titles (e.g. **"Life Will Change"** from **Persona 5**).
+                - Use brief bullet points for your recommendations so it looks stunning on screen!
+            `;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: userQuery }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            let delay = 1000;
+            const maxRetries = 5;
+
+            // Only make live requests if a resolved key exists, otherwise fall back immediately
+            if (resolvedKey && resolvedKey.trim() !== "") {
+                for (let i = 0; i < maxRetries; i++) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                            if (responseText) {
+                                return responseText;
+                            }
+                        } else {
+                            if (response.status === 400 || response.status === 403) {
+                                break;
+                            }
+                        }
+                    } catch (error) {
+                        // Fail silently inside retry loop
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+
+            // Clean fallback in case of connection limits or missing key
+            return getSmartOfflineBackup(userQuery);
+        }
+
+        // Ultra-Smart, Weighted Offline Search Engine Fallback
+        function getSmartOfflineBackup(userQuery) {
+            const lower = userQuery.toLowerCase();
+            let bestCat = null;
+            let maxScore = 0;
+
+            scoringCategories.forEach(cat => {
+                let score = 0;
+                
+                // Strong keywords are worth 10 points
+                cat.strong.forEach(kw => {
+                    if (lower.includes(kw)) {
+                        score += 10;
+                    }
+                });
+                
+                // Weak keywords are worth 1 point (used as minor tie-breakers)
+                if (cat.weak) {
+                    cat.weak.forEach(kw => {
+                        if (lower.includes(kw)) {
+                            score += 1;
+                        }
+                    });
+                }
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestCat = cat;
+                }
+            });
+
+            // If we found a valid category match, return its dedicated response
+            if (bestCat && maxScore > 0) {
+                return bestCat.response;
+            }
+
+            // Default general fallback when no specific category score wins
+            return `👋 Hello! I explored the music universe for you. Even when the stars are a little cloudy, here are some phenomenal cross-genre video game music tracks:
+            
+* 🎷 **"Beneath the Mask"** from **Persona 5** (Smooth, chill lounge Acid Jazz)
+* 👾 **"Glass Coffin"** from **Neon White** (High-speed glitchy Breakcore/Drum-and-Bass)
+* 🌌 **"Dust"** from **Hotline Miami** (Nostalgic Synthwave and retro dreamscape)`;
+        }
+    </script>
+</body>
+</html>
