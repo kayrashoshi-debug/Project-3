@@ -223,18 +223,27 @@
                             <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
                         </div>
                         <div>
-                            <h2 class="font-space font-bold text-sm text-white flex items-center gap-1.5">
-                                Vibe Guide AI 
-                                <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded-md font-sans uppercase font-extrabold">Active</span>
-                            </h2>
+                            <div class="flex items-center gap-2">
+                                <h2 class="font-space font-bold text-sm text-white flex items-center gap-1.5">
+                                    Vibe Guide AI 
+                                </h2>
+                                <span id="onlineBadge" class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded-md font-sans uppercase font-extrabold flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Offline Mode
+                                </span>
+                            </div>
                             <p class="text-xs text-slate-400" id="subTitleText">Your guide across music universes</p>
                         </div>
                     </div>
                     
-                    <!-- Quick Prompt Suggestions Trigger -->
-                    <button onclick="showQuickPrompts()" class="text-xs font-semibold text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 border border-white/5 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-lightbulb"></i> <span>Quick Prompts</span>
-                    </button>
+                    <!-- Quick Prompt Suggestions Trigger & API Config -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="openApiKeyModal()" class="text-xs font-semibold text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 border border-white/5 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-key text-yellow-400 animate-pulse"></i> <span>Gemini Key</span>
+                        </button>
+                        <button onclick="showQuickPrompts()" class="text-xs font-semibold text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 border border-white/5 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> <span>Quick Prompts</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Messages Feed -->
@@ -253,11 +262,11 @@
 
                     <!-- Initial Suggestion Chips inside feed -->
                     <div class="flex flex-wrap gap-2 pl-11" id="quickChipsContainer">
-                        <button onclick="submitPrompt('My friend thinks game music is just noise but they love upbeat tropical tunes! Any Bloons TD 6 recommendations?')" class="text-xs bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
-                            🎈 "Find fun Bloons TD 6 tropical tracks"
+                        <button onclick="submitPrompt('My friend thinks game music is just noise but they love smooth 60s Jazz!')" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
+                            🎷 "My friend loves classic 60s Jazz!"
                         </button>
-                        <button onclick="submitPrompt('What online custom levels are famous in Geometry Dash? Tell me about Kisaragi, Aperture and Tidal Wave!')" class="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
-                            🟩 "Tell me about Tidal Wave, Aperture and Kisaragi"
+                        <button onclick="submitPrompt('My friend loves fast breakcore drum patterns! Any game tracks for them?')" class="text-xs bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
+                            👾 "Find Breakcore / Glitchcore tracks"
                         </button>
                         <button onclick="submitPrompt('Show us awesome Pokémon video game tracks!')" class="text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 rounded-xl px-3.5 py-2 text-left transition max-w-sm">
                             ⭐ "Explore Pokémon Soundtrack Vibes"
@@ -291,6 +300,37 @@
                     </div>
                 </div>
 
+                <!-- Custom Modal for API Key configuration -->
+                <div id="apiKeyModal" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-6 flex flex-col justify-center items-center">
+                    <div class="max-w-md w-full bg-slate-900 border border-white/10 rounded-3xl p-6 shadow-2xl relative text-center">
+                        <button onclick="closeApiKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <div class="w-14 h-14 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <h3 class="font-space font-bold text-lg text-white mb-1">Set Gemini API Key</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                            Connect the app directly to your personal Google AI Studio Key! <br>
+                            Type open-ended prompts like <br>
+                            <span class="text-amber-400 font-semibold italic">"something for a dark rainy night"</span> or <br>
+                            <span class="text-amber-400 font-semibold italic">"music for a bright energetic morning"</span> and let the AI pick!<br><br>
+                            Don't have a key? Grab a free API key at <a href="https://aistudio.google.com/apikey" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">aistudio.google.com/apikey</a>.
+                        </p>
+                        
+                        <div class="mb-4 text-left">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Gemini API Key</label>
+                            <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key starting with AIzaSy..." class="w-full bg-slate-950/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="saveApiKey()" class="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold transition text-white">Save Key</button>
+                            <button onclick="clearApiKey()" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold transition text-rose-400">Reset</button>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2.5"><i class="fa-solid fa-lock mr-1"></i>Stored safely in your local browser storage.</p>
+                    </div>
+                </div>
+
                 <!-- Input Interactive Dock -->
                 <div class="p-4 bg-white/5 border-t border-white/10 flex flex-col gap-2 relative z-10">
                     <form onsubmit="handleSend(event)" class="flex gap-2">
@@ -301,7 +341,7 @@
                     </form>
                     
                     <div class="flex items-center justify-between text-[10px] text-slate-500 px-1">
-                        <span class="flex items-center gap-1"><i class="fa-solid fa-lock"></i> No API key needed</span>
+                        <span class="flex items-center gap-1 cursor-pointer hover:text-slate-300" onclick="openApiKeyModal()"><i class="fa-solid fa-lock"></i> Click to configure Gemini Live AI</span>
                         <span>Press Enter to analyze vibe</span>
                     </div>
                 </div>
@@ -326,8 +366,8 @@
 
     <!-- Scripting Area: Core logic, Gemini API setup, animations, visualizer, and vibe-coding engines -->
     <script>
-        // API Configuration (Gemini API runtime configuration)
-        const apiKey = ""; 
+        // Default Google Gemini API key configuration (user-specified value)
+        let defaultApiKey = ""; 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'music-universe-hack';
 
         // Internal State
@@ -530,6 +570,31 @@
             }
         };
 
+        // Complete track database context for RAG
+        const trackDatabase = [
+            { name: "Beneath the Mask", game: "Persona 5", genre: "Smooth Acid Jazz lounge", vibes: "chill, study, relax, rainy, moody, night", themeKey: "jazz" },
+            { name: "The Fragrance of Dark Coffee", game: "Phoenix Wright: Ace Attorney", genre: "Cozy bar jazz saxophone/piano", vibes: "sad, coffee, focus, nostalgic, sunset", themeKey: "jazz" },
+            { name: "Staff Roll", game: "Super Mario 3D World", genre: "Big-Band swing jazz parade", vibes: "happy, bright, morning, energetic, upbeat", themeKey: "jazz" },
+            { name: "Glass Coffin", game: "Neon White", genre: "High-speed Breakcore / Drum-and-Bass", vibes: "chaotic, intense, laser focus, adrenaline", themeKey: "breakcore" },
+            { name: "Machine in the Walls", game: "Ultrakill", genre: "Aggressive industrial breakcore metal", vibes: "angry, heavy, dark, extreme speed", themeKey: "breakcore" },
+            { name: "Chaoz Fantasy", game: "Geometry Dash / ParagonX9", genre: "Melodic chiptune breakcore", vibes: "gaming, arcade, fast, hyper, nostalgic", themeKey: "breakcore" },
+            { name: "Aperture", game: "Geometry Dash", genre: "Sci-Fi Space Electro / progressive house arps", vibes: "space, cosmic, futuristic, portal travel, stars", themeKey: "geometrydash" },
+            { name: "Tidal Wave", game: "Geometry Dash / OniLink", genre: "Tropical summer electro house", vibes: "beach, upbeat, bright morning, happy, sun", themeKey: "geometrydash" },
+            { name: "Kisaragi", game: "Geometry Dash / Alkaline", genre: "Symphonic space chiptune", vibes: "beautiful, cyber, galactic, emotional, anime girl", themeKey: "geometrydash" },
+            { name: "At the Speed of Light", game: "Dimrain47", genre: "Symphonic progressive chiptune", vibes: "epic, extreme challenge, dark castle, bloodbath", themeKey: "geometrydash" },
+            { name: "Nine Circles", game: "NightKILLA", genre: "Heavy dubstep drop electro-step", vibes: "flashing, drop, heavy bass, extreme demon", themeKey: "geometrydash" },
+            { name: "Street Party", game: "Bloons TD 6", genre: "Tropical funk house brass", vibes: "party, playful, happy, monkeys, fun, bright morning", themeKey: "bloonstd6" },
+            { name: "Sunshine Shallot", game: "Bloons TD 6", genre: "Upbeat resort summer synth", vibes: "sunny, tropical, calm vacation, warm", themeKey: "bloonstd6" },
+            { name: "Dragonborn", game: "Skyrim", genre: "Cinematic orchestral war choir fantasy", vibes: "epic, medieval, massive adventure, dragons", themeKey: "epicrpg" },
+            { name: "Main Theme", game: "Elden Ring", genre: "Severe dramatic boss brass symphony", vibes: "gothic, severe challenge, intense struggle", themeKey: "epicrpg" },
+            { name: "Prelude", game: "Final Fantasy", genre: "Cascading fantasy harp prelude", vibes: "dreamy, magical, study, relax, crystal, star gaze", themeKey: "epicrpg" },
+            { name: "The Only Thing They Fear Is You", game: "DOOM Eternal", genre: "Aggressive industrial metal saw-wave chug", vibes: "adrenaline, brutal metal, gaming run, heavy riff", themeKey: "cyberpunk" },
+            { name: "Rebel Path", game: "Cyberpunk 2077", genre: "Gritty cello over analog synthesizers", vibes: "futuristic, dystopian, driving fast, rebellion, neon", themeKey: "cyberpunk" },
+            { name: "Division Ruine", game: "Carpenter Brut", genre: "Dark outrun synthwave chase", vibes: "retro action, motorcycle, neon highway, intense", themeKey: "cyberpunk" },
+            { name: "Wet Hands", game: "Minecraft", genre: "Calming solo acoustic piano", vibes: "peaceful, calm, rainy, sleep, focus, blocky", themeKey: "lofi" },
+            { name: "5 PM", game: "Animal Crossing: New Horizons", genre: "Warm laid-back acoustic guitar", vibes: "lazy afternoon, cozy, school done, home", themeKey: "lofi" }
+        ];
+
         // Shared Scoring Categories config for synchronized theme matching and database fallback
         const scoringCategories = [
             {
@@ -537,7 +602,7 @@
                 theme: 'bloonstd6',
                 strong: ['btd6', 'bloons', 'bloon', 'bloons td 6', 'street party', 'fiesta crater', 'sunshine shallot', 'tim haywood', 'pop', 'monkey', 'monkeys', 'dart monkey'],
                 weak: ['tropical', 'party', 'funky', 'brass', 'defense', 'balloon', 'balloons'],
-                response: `🎈 **Round Started! Welcome to the Bloons TD 6 Festival!** tim haywood has composed one of the absolute happiest, most infectious soundtracks ever created for a strategy game. Here are 3 tropical, funky tracks to share with your friends:
+                response: `🎈 **Round Started! Welcome to the Bloons TD 6 Festival!** Tim Haywood has composed one of the absolute happiest, most infectious soundtracks ever created for a strategy game. Here are 3 tropical, funky tracks to share with your friends:
             
 * 🎺 **"Street Party"** (Tropical Funk House) - An absolute fan-favorite! It combines driving summer percussion, acoustic guitar rhythms, and an incredibly catchy live brass and saxophone horn section hook that makes popping balloons feel like a parade.
 * 🍍 **"Sunshine Shallot"** (Upbeat Electro-Summer) - Warm, optimistic synthesizers and steel-drum textures that capture the bright, sunny feeling of a tropical resort map.
@@ -698,6 +763,7 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             bars = document.querySelectorAll('#visualizerBars span');
             
             initAmbientCanvas();
+            updateOnlineBadgeStatus(); // Check local storage/hardcoded key status
             setTheme('space');
             
             // Periodically bounce ambient elements slightly
@@ -711,6 +777,7 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
         const ctx = canvas.getContext('2d');
         let stars = [];
 
+        // initAmbientCanvas
         function initAmbientCanvas() {
             resizeCanvas();
             window.addEventListener('resize', () => {
@@ -765,6 +832,7 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
 
         // Theme and Vibe Switcher
         function setTheme(themeKey) {
+            if (!themes[themeKey]) return;
             activeTheme = themeKey;
             const theme = themes[themeKey];
             
@@ -809,6 +877,48 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             if (isPlaying) {
                 stopSynthLoop();
                 startSynthLoop();
+            }
+        }
+
+        // Key modal management functions for Direct Google Gemini API Key
+        function openApiKeyModal() {
+            const savedKey = localStorage.getItem('gemini_api_key') || defaultApiKey || '';
+            document.getElementById('apiKeyInput').value = savedKey;
+            document.getElementById('apiKeyModal').classList.remove('hidden');
+        }
+
+        function closeApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const keyVal = document.getElementById('apiKeyInput').value.trim();
+            if (keyVal === "") {
+                clearApiKey();
+                return;
+            }
+            localStorage.setItem('gemini_api_key', keyVal);
+            updateOnlineBadgeStatus();
+            closeApiKeyModal();
+            showModal("Key Configured!", "Direct Gemini API Key is saved securely in your browser storage!", true);
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem('gemini_api_key');
+            updateOnlineBadgeStatus();
+            closeApiKeyModal();
+            showModal("Key Reset", "Direct API key cleared. Using system environment fallback or offline backup.", false);
+        }
+
+        function updateOnlineBadgeStatus() {
+            const savedKey = localStorage.getItem('gemini_api_key') || defaultApiKey;
+            const badge = document.getElementById('onlineBadge');
+            if (savedKey && savedKey.trim() !== "") {
+                badge.className = "text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded-md font-sans uppercase font-extrabold flex items-center gap-1";
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Gemini Live';
+            } else {
+                badge.className = "text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded-md font-sans uppercase font-extrabold flex items-center gap-1";
+                badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Offline Mode';
             }
         }
 
@@ -1611,7 +1721,21 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             try {
                 const aiResponse = await callGeminiAI(userText);
                 removeLoadingBubble(loadingBubbleId);
-                appendMessage(aiResponse, 'bot');
+                
+                // Scan the response for play theme instruction tag (e.g. [PLAY_THEME: geometrydash])
+                const themeMatch = aiResponse.match(/\[PLAY_THEME:\s*([a-zA-Z0-9_-]+)\]/);
+                let cleanedResponse = aiResponse;
+                
+                if (themeMatch) {
+                    const themeToPlay = themeMatch[1].trim();
+                    // Strip the hidden tag from the user-facing message bubble
+                    cleanedResponse = aiResponse.replace(/\[PLAY_THEME:\s*[a-zA-Z0-9_-]+\]/, '').trim();
+                    
+                    // Switch the visual look and tone of turntable
+                    setTheme(themeToPlay);
+                }
+
+                appendMessage(cleanedResponse, 'bot');
                 
                 // Auto-start music visualizer simulation upon successfully generating fresh matches
                 if (!isPlaying) togglePlay(); 
@@ -1619,7 +1743,7 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             } catch (err) {
                 removeLoadingBubble(loadingBubbleId);
                 appendMessage(`⚠️ **System Issue:** ${err.message}`, 'error');
-                showModal("Analysis Issue", "We ran into an connection delay. Please ensure you are online and try again!", false);
+                showModal("Analysis Issue", "We ran into an connection delay. Please ensure your are online and try again!", false);
             } finally {
                 sendBtn.disabled = false;
                 sendIcon.className = "fa-solid fa-paper-plane";
@@ -1726,9 +1850,8 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
         }
 
         function formatMarkdown(text) {
-            // Replaces stars with bullet structures and ** with bold tags
+            // Replaces stars with bold tags and formats bullets nicely
             let html = text
-                .replace(/\*\/(.*?)\*\//g, '<strong>$1</strong>') // Handle generic matches
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/^\*\s(.*)/gm, '• $1')
                 .replace(/\n/g, '<br>');
@@ -1737,28 +1860,35 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
 
         // Complete robust Gemini API integration with standard retry logic (exponential backoff)
         async function callGeminiAI(userQuery) {
-            // Resolve key dynamically using runtime auto-injection structures
-            const resolvedKey = apiKey || (typeof __api_key !== 'undefined' ? __api_key : '');
+            // Resolve key directly from Local Storage or hardcoded fallback
+            const resolvedKey = localStorage.getItem('gemini_api_key') || defaultApiKey || "";
             
             const modelName = 'gemini-2.5-flash-preview-09-2025';
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${resolvedKey}`;
 
+            // Create context string from track database (RAG prompt enhancement)
+            const trackListString = trackDatabase.map(track => 
+                `- Track: "${track.name}" | Game: "${track.game}" | Genre: "${track.genre}" | Vibes: [${track.vibes}] | ThemeKey: "${track.themeKey}"`
+            ).join('\n');
+
             const systemPrompt = `
                 You are "The Universe of Music Finder AI", created by the hackathon team "Music Finders".
-                Your job is to act as a brilliant music-coaching partner to show people that video game music is a legitimate, beautiful form of art.
+                Your job is to act as a brilliant music sommelier to show people that video game music is a beautiful form of art.
                 
-                The user is a teenager under 18 years old, so keep all recommendations and descriptions safe, clean, educational, inspiring, and completely appropriate. Avoid any topics involving harm or suggestive content.
+                The user is a teenager under 18 years old, so keep all recommendations clean, inspirational, educational, and completely appropriate. Avoid any topics involving harm or suggestive content.
                 
-                The user's friend typically believes video game music is "just random noise." The user will provide a genre or a specific game reference (e.g., Jazz, Synthwave, Techno, Classical, Breakcore, Rock, Lo-Fi, Hip-Hop, Pop, Pokemon, Geometry Dash, Bloons TD 6 / BTD6, Epic RPG, Cyberpunk).
-                
+                You have access to a static database of synthesized tracks built directly into our app. Here is your database context:
+                ${trackListString}
+
                 Your objective:
-                1. Always recommend 3 matching Video Game Music (VGM) tracks that perfectly parallel their favorite music or fit their query.
-                2. Explain with high enthusiasm exactly *why* they match (rhythm, instruments, chords, mood).
-                3. Keep your advice friendly, high energy, structured, and extremely accessible. Do not use complex jargon. 
+                1. Review the user's input/mood.
+                2. Select 1 to 3 matching tracks exclusively from the database list above. Do NOT invent or make up tracks that are not in the list!
+                3. Explain with high enthusiasm exactly why they match the user's mood, referencing their vibes, instruments, and game context.
+                4. Select the absolute best track out of your recommendations. At the very end of your response, on a new line, write exactly: [PLAY_THEME: themeKey] (where themeKey is the "ThemeKey" value associated with your primary recommended track, e.g. "jazz" or "bloonstd6"). This hidden tag will automatically set the user's active synth player to match your recommendation!
                 
                 Format your responses neatly:
                 - Use a friendly welcome.
-                - Bold track names and Game titles (e.g. **"Life Will Change"** from **Persona 5**).
+                - Bold track names and Game titles (e.g. **"Beneath the Mask"** from **Persona 5**).
                 - Use brief bullet points for your recommendations so it looks stunning on screen!
             `;
 
@@ -1774,7 +1904,7 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             let delay = 1000;
             const maxRetries = 5;
 
-            // Only make live requests if a resolved key exists, otherwise fall back immediately
+            // Only make live requests if a saved key exists
             if (resolvedKey && resolvedKey.trim() !== "") {
                 for (let i = 0; i < maxRetries; i++) {
                     try {
@@ -1793,12 +1923,19 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
                                 return responseText;
                             }
                         } else {
-                            if (response.status === 400 || response.status === 403) {
-                                break;
-                            }
+                            // If response is not OK (e.g., 400 Bad Request), extract the error description
+                            const errData = await response.json().catch(() => ({}));
+                            const errMsg = errData.error?.message || `HTTP Status ${response.status}`;
+                            
+                            // Throw to the catch block so the user knows exactly why their API Key failed!
+                            throw new Error(`Google API Rejected: ${errMsg}`);
                         }
                     } catch (error) {
-                        // Fail silently inside retry loop
+                        // If it's a key-authorization failure, stop retrying and present the error instantly
+                        if (error.message && error.message.includes("Google API Rejected")) {
+                            throw error;
+                        }
+                        // For generic network errors, silently let exponential backoff retry
                     }
 
                     await new Promise(resolve => setTimeout(resolve, delay));
@@ -1843,7 +1980,7 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
 
             // If we found a valid category match, return its dedicated response
             if (bestCat && maxScore > 0) {
-                return bestCat.response;
+                return `${bestCat.response}\n\n[PLAY_THEME: ${bestCat.theme}]`;
             }
 
             // Default general fallback when no specific category score wins
@@ -1851,7 +1988,9 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             
 * 🎷 **"Beneath the Mask"** from **Persona 5** (Smooth, chill lounge Acid Jazz)
 * 👾 **"Glass Coffin"** from **Neon White** (High-speed glitchy Breakcore/Drum-and-Bass)
-* 🌌 **"Dust"** from **Hotline Miami** (Nostalgic Synthwave and retro dreamscape)`;
+* 🌌 **"Dust"** from **Hotline Miami** (Nostalgic Synthwave and retro dreamscape)
+
+[PLAY_THEME: lofi]`;
         }
     </script>
 </body>
