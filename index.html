@@ -238,7 +238,7 @@
                     <!-- Quick Prompt Suggestions Trigger & API Config -->
                     <div class="flex items-center gap-2">
                         <button onclick="openApiKeyModal()" class="text-xs font-semibold text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 border border-white/5 transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-key text-yellow-400 animate-pulse"></i> <span>Gemini Key</span>
+                            <i class="fa-solid fa-key text-yellow-400 animate-pulse"></i> <span>AI Proxy</span>
                         </button>
                         <button onclick="showQuickPrompts()" class="text-xs font-semibold text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 border border-white/5 transition flex items-center gap-1.5">
                             <i class="fa-solid fa-lightbulb"></i> <span>Quick Prompts</span>
@@ -309,25 +309,26 @@
                         <div class="w-14 h-14 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4">
                             <i class="fa-solid fa-key"></i>
                         </div>
-                        <h3 class="font-space font-bold text-lg text-white mb-1">Set Gemini API Key</h3>
+                        <h3 class="font-space font-bold text-lg text-white mb-1">Connect to Your Music Proxy</h3>
                         <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                            Connect the app directly to your personal Google AI Studio Key! <br>
-                            Type open-ended prompts like <br>
+                            Paste your Apps Script <span class="text-white font-semibold">Web App URL</span> (the link ending in <span class="text-amber-400 font-semibold">/exec</span>).<br>
+                            Your Gemini key stays safe on the server &mdash; the app never sees it.<br><br>
+                            Then type open-ended prompts like <br>
                             <span class="text-amber-400 font-semibold italic">"something for a dark rainy night"</span> or <br>
                             <span class="text-amber-400 font-semibold italic">"music for a bright energetic morning"</span> and let the AI pick!<br><br>
-                            Don't have a key? Grab a free API key at <a href="https://aistudio.google.com/apikey" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">aistudio.google.com/apikey</a>.
+                            In Apps Script: <span class="text-slate-300">Deploy &rarr; New deployment &rarr; Web app &rarr; Who has access: Anyone</span>.
                         </p>
-                        
+
                         <div class="mb-4 text-left">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Gemini API Key</label>
-                            <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key starting with AIzaSy..." class="w-full bg-slate-950/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Web App URL ( /exec )</label>
+                            <input type="url" id="apiKeyInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full bg-slate-950/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
                         </div>
 
                         <div class="flex gap-2">
-                            <button onclick="saveApiKey()" class="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold transition text-white">Save Key</button>
+                            <button onclick="saveApiKey()" class="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold transition text-white">Connect</button>
                             <button onclick="clearApiKey()" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold transition text-rose-400">Reset</button>
                         </div>
-                        <p class="text-[10px] text-slate-500 mt-2.5"><i class="fa-solid fa-lock mr-1"></i>Stored safely in your local browser storage.</p>
+                        <p class="text-[10px] text-slate-500 mt-2.5"><i class="fa-solid fa-lock mr-1"></i>Your API key never leaves the server. Only this URL is stored locally.</p>
                     </div>
                 </div>
 
@@ -341,7 +342,7 @@
                     </form>
                     
                     <div class="flex items-center justify-between text-[10px] text-slate-500 px-1">
-                        <span class="flex items-center gap-1 cursor-pointer hover:text-slate-300" onclick="openApiKeyModal()"><i class="fa-solid fa-lock"></i> Click to configure Gemini Live AI</span>
+                        <span class="flex items-center gap-1 cursor-pointer hover:text-slate-300" onclick="openApiKeyModal()"><i class="fa-solid fa-lock"></i> Click to connect your AI proxy</span>
                         <span>Press Enter to analyze vibe</span>
                     </div>
                 </div>
@@ -366,8 +367,23 @@
 
     <!-- Scripting Area: Core logic, Gemini API setup, animations, visualizer, and vibe-coding engines -->
     <script>
-        // Default Google Gemini API key configuration (user-specified value)
-        let defaultApiKey = ""; 
+        // ── Secure proxy configuration ──────────────────────────────────────
+        // The Gemini API key is NOT stored in the browser. It lives server-side in
+        // the Apps Script Script Property GEMINI_API_KEY (see code.gs). The browser
+        // only needs the Web App deployment URL of that proxy.
+        //
+        // Set it either here (edit DEFAULT_PROXY_URL) or at runtime from the in-app
+        // modal (the value is then remembered in localStorage under 'proxy_url').
+        const DEFAULT_PROXY_URL = "PASTE_YOUR_WEB_APP_EXEC_URL_HERE"; // e.g. https://script.google.com/macros/s/AKfycb.../exec
+
+        function getProxyUrl() {
+            const saved = (localStorage.getItem('proxy_url') || "").trim();
+            return saved || DEFAULT_PROXY_URL;
+        }
+
+        function isProxyConfigured() {
+            return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(getProxyUrl());
+        }
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'music-universe-hack';
 
         // Internal State
@@ -880,10 +896,11 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             }
         }
 
-        // Key modal management functions for Direct Google Gemini API Key
+        // Modal management — configures the Web App proxy URL (the code.gs deployment).
+        // The Gemini key stays server-side; the browser only stores this URL.
         function openApiKeyModal() {
-            const savedKey = localStorage.getItem('gemini_api_key') || defaultApiKey || '';
-            document.getElementById('apiKeyInput').value = savedKey;
+            const savedUrl = (localStorage.getItem('proxy_url') || (isProxyConfigured() ? getProxyUrl() : '')).trim();
+            document.getElementById('apiKeyInput').value = savedUrl;
             document.getElementById('apiKeyModal').classList.remove('hidden');
         }
 
@@ -892,28 +909,31 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
         }
 
         function saveApiKey() {
-            const keyVal = document.getElementById('apiKeyInput').value.trim();
-            if (keyVal === "") {
+            const urlVal = document.getElementById('apiKeyInput').value.trim();
+            if (urlVal === "") {
                 clearApiKey();
                 return;
             }
-            localStorage.setItem('gemini_api_key', keyVal);
+            if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(urlVal)) {
+                showModal("Check the URL", "That doesn't look like a Web App URL. It should start with https://script.google.com/macros/s/ and end with /exec.", false);
+                return;
+            }
+            localStorage.setItem('proxy_url', urlVal);
             updateOnlineBadgeStatus();
             closeApiKeyModal();
-            showModal("Key Configured!", "Direct Gemini API Key is saved securely in your browser storage!", true);
+            showModal("Proxy Connected!", "Your music app is now linked to the secure Gemini proxy. The API key stays safely on the server.", true);
         }
 
         function clearApiKey() {
-            localStorage.removeItem('gemini_api_key');
+            localStorage.removeItem('proxy_url');
             updateOnlineBadgeStatus();
             closeApiKeyModal();
-            showModal("Key Reset", "Direct API key cleared. Using system environment fallback or offline backup.", false);
+            showModal("Proxy Reset", "Proxy URL cleared. The app will use its offline backup engine until you reconnect.", false);
         }
 
         function updateOnlineBadgeStatus() {
-            const savedKey = localStorage.getItem('gemini_api_key') || defaultApiKey;
             const badge = document.getElementById('onlineBadge');
-            if (savedKey && savedKey.trim() !== "") {
+            if (isProxyConfigured()) {
                 badge.className = "text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded-md font-sans uppercase font-extrabold flex items-center gap-1";
                 badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Gemini Live';
             } else {
@@ -1858,14 +1878,9 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
             return html;
         }
 
-        // Complete robust Gemini API integration with standard retry logic (exponential backoff)
+        // Routes the request through the secure Apps Script proxy (code.gs), which
+        // injects the server-side Gemini key and returns { responseText } or { error }.
         async function callGeminiAI(userQuery) {
-            // Resolve key directly from Local Storage or hardcoded fallback
-            const resolvedKey = localStorage.getItem('gemini_api_key') || defaultApiKey || "";
-            
-            const modelName = 'gemini-2.5-flash-preview-09-2025';
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${resolvedKey}`;
-
             // Create context string from track database (RAG prompt enhancement)
             const trackListString = trackDatabase.map(track => 
                 `- Track: "${track.name}" | Game: "${track.game}" | Genre: "${track.genre}" | Vibes: [${track.vibes}] | ThemeKey: "${track.themeKey}"`
@@ -1901,49 +1916,58 @@ Pokémon games have some of the most legendary, genre-spanning musical masterpie
                 }
             };
 
-            let delay = 1000;
-            const maxRetries = 5;
-
-            // Only make live requests if a saved key exists
-            if (resolvedKey && resolvedKey.trim() !== "") {
-                for (let i = 0; i < maxRetries; i++) {
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                            if (responseText) {
-                                return responseText;
-                            }
-                        } else {
-                            // If response is not OK (e.g., 400 Bad Request), extract the error description
-                            const errData = await response.json().catch(() => ({}));
-                            const errMsg = errData.error?.message || `HTTP Status ${response.status}`;
-                            
-                            // Throw to the catch block so the user knows exactly why their API Key failed!
-                            throw new Error(`Google API Rejected: ${errMsg}`);
-                        }
-                    } catch (error) {
-                        // If it's a key-authorization failure, stop retrying and present the error instantly
-                        if (error.message && error.message.includes("Google API Rejected")) {
-                            throw error;
-                        }
-                        // For generic network errors, silently let exponential backoff retry
-                    }
-
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                }
+            // If the proxy URL isn't set yet, degrade gracefully to the offline engine.
+            if (!isProxyConfigured()) {
+                console.warn("[Music Finders] Proxy URL not configured — set it with the 'AI Proxy' button (or DEFAULT_PROXY_URL). Using offline backup.");
+                return getSmartOfflineBackup(userQuery);
             }
 
-            // Clean fallback in case of connection limits or missing key
+            const proxyUrl = getProxyUrl();
+            let delay = 1000;
+            const maxRetries = 4;
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    // IMPORTANT: send as text/plain so the browser makes a "simple" request and
+                    // does NOT fire a CORS preflight (OPTIONS) that Apps Script cannot answer.
+                    // The body is still JSON; the proxy parses it via JSON.parse(e.postData.contents).
+                    const response = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload),
+                        redirect: 'follow'
+                    });
+
+                    let data;
+                    try {
+                        data = await response.json();
+                    } catch (parseErr) {
+                        // Usually means the Web App was not deployed with access "Anyone",
+                        // so Google served an HTML login page instead of JSON.
+                        throw new Error('Proxy did not return JSON. Re-deploy the Web App with "Who has access: Anyone".');
+                    }
+
+                    if (data.error) {
+                        // The proxy reported a real config/API error — surface it, don't retry.
+                        throw new Error(`Proxy Error: ${data.error}`);
+                    }
+                    if (data.responseText) {
+                        return data.responseText;
+                    }
+                    // Empty response — fall through to a retry.
+                } catch (error) {
+                    // Show deterministic errors immediately; only retry transient network blips.
+                    if (error.message && (error.message.startsWith("Proxy Error:") || error.message.startsWith("Proxy did not return JSON"))) {
+                        throw error;
+                    }
+                    // transient network error → exponential backoff retry below
+                }
+
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+
+            // Clean fallback after repeated connection issues
             return getSmartOfflineBackup(userQuery);
         }
 

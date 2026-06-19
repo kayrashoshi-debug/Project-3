@@ -4,7 +4,7 @@
  */
 
 // Global Configuration
-const DEFAULT_MODEL = "gemini-2.5-flash-preview-09-2025";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 
 /**
  * Reusable helper to send formatted JSON responses back to the client-side app
